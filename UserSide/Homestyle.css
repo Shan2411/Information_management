@@ -1,0 +1,27 @@
+ /* Header */
+ 
+  .header {
+    position:sticky;
+    top: 0;
+    height: 10%;
+    width: 100%;
+    z-index: 2;
+    background-color: rgb(116, 142, 159);
+  }
+
+  /* When hidden (scrolled up) we move it up out of view */
+  .header.hidden-up {
+    transform: translateY(-110%); /* slide away */
+    opacity: 0.98;
+    pointer-events: none; /* avoid accidental clicks while hidden */
+  }
+
+
+  .navbar1{
+    height: 3%;
+    width: 100%;
+    background-color: rgb(239, 237, 232);
+    position: fixed;
+      z-index: 60;
+    display: hidden;
+  }

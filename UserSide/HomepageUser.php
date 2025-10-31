@@ -33,22 +33,22 @@ include 'db_connect.php';
   <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
 
     <!-- Left: Logo -->
-    <a href="#" class="text-2xl font-bold tracking-wide hover:opacity-90 transition">
+    <a href="#home" class="text-2xl font-bold tracking-wide hover:opacity-90 transition">
       Electronic Device Market
     </a>
 
     <!-- Center: Navigation -->
     <nav class="hidden md:flex items-center space-x-8 text-[15px] font-medium">
-      <a href="#" class="underline hover:text-gray-200 transition">Home</a>
+      <a href="#home" class="hover:text-gray-200 transition">Home</a>
       <a href="mainproducts.php" class="hover:text-gray-200 transition">Products</a>
-      <a href="#contact" class="hover:text-gray-200 transition">Contact</a>
+      <a href="about.php" class="hover:text-gray-200 transition">About Us</a>
     </nav>
 
     <!-- Right: Cart + Profile / Auth -->
     <div class="flex items-center space-x-4">
  <?php if (isset($_SESSION['user_id'])): ?>
   <!-- Logged in: Cart Button -->
-            <a href="cart.php" 
+            <a href="viewcart.php" 
               class="flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-full transition">
               <span class="text-xl">🛒</span>
               <span class="hidden sm:inline text-sm font-semibold">View Cart</span>
@@ -105,7 +105,7 @@ include 'db_connect.php';
 
 
   <!-- HERO -->
-  <section class="bg-[rgb(116,142,159)] text-white py-20 text-center">
+  <section class="bg-[rgb(116,142,159)] text-white py-20 text-center" id = "home">
     <h2 class="text-4xl font-bold mb-4">Shop the Latest Electronics</h2>
     <p class="text-lg mb-6">Smart devices, powerful laptops, and next-gen gadgets.</p>
     <a href="mainproducts.php" class="bg-white text-[rgb(116,142,159)] px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">Shop Now</a>
@@ -352,6 +352,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 </script>
+
+
 
   <!-- FOOTER -->
   <footer class="bg-[rgb(116,142,159)] text-white text-center py-6">

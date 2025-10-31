@@ -1,6 +1,5 @@
 <?php
 include 'db_connect.php';
-session_start();
 
 // Handle filters
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -37,16 +36,19 @@ $result = $stmt->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>All Products | Electronic Device Market</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <title>All Products | Electronic Device Market</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[rgb(177, 189, 197)] text-gray-800">
 
-
-<body class="bg-gray-100 text-gray-800">
-  <!-- Header -->
-  <?php include 'header.php'; ?>
+  <!-- HEADER (Matches Homepage) -->
+  <header style = "margin-bottom: 5%; text-align: center">
+        <div style = " background-color: rgb(177, 189, 197); width 45%">
+            <h3 class="text-3xl font-bold text-center mb-10">Products Section</h3>
+        </div>
+  </header>
 
   <!-- FILTER SECTION -->
   <section class="max-w-7xl mx-auto mt-10 bg-white p-6 rounded-2xl shadow-lg">
@@ -148,9 +150,8 @@ $result = $stmt->get_result();
     <?php endif; ?>
   </section>
 
-  
-
-    <script>
+  <script>
+    const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>;
     document.querySelectorAll(".addToCart, .buyNow").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const product_id = btn.dataset.product_id;
@@ -160,18 +161,17 @@ $result = $stmt->get_result();
 
         if (!isLoggedIn) {
           e.preventDefault();
-          openAuthModal(); // from header.php
+          openAuthModal(); // same popup as homepage
           return;
         }
 
-        const target = btn.classList.contains("buyNow") 
-          ? `buy_now.php?product_id=${product_id}&name=${encodeURIComponent(name)}&price=${price}&quantity=${quantity}`
-          : `add_to_cart.php?product_id=${product_id}&name=${encodeURIComponent(name)}&price=${price}&quantity=${quantity}`;
-          
-        window.location.href = target;
+        if (btn.classList.contains("buyNow")) {
+          window.location.href = `buy_now.php?product_id=${product_id}&name=${encodeURIComponent(name)}&price=${price}&quantity=${quantity}`;
+        } else {
+          window.location.href = `add_to_cart.php?product_id=${product_id}&name=${encodeURIComponent(name)}&price=${price}&quantity=${quantity}`;
+        }
       });
     });
-    </script>
-
+  </script>
 </body>
 </html>

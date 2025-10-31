@@ -110,54 +110,58 @@ include 'db_connect.php';
 
   <!-- Scrollable container -->
   <div id="productSlider" class="flex space-x-6 overflow-x-auto no-scrollbar scroll-container px-2 scroll-smooth">
-    <?php
-    if ($product_count > 0) {
-      while ($row = $result->fetch_assoc()) {
-        echo "
-        <div class='w-[300px] bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition flex-shrink-0'>
-          <img src='https://i1.sndcdn.com/artworks-YKzQGzw6kpjz4xoL-b6nyFw-t1080x1080.jpg' class='w-full h-48 object-cover cursor-pointer'>
-          <div class='p-5 flex flex-col h-[260px] justify-between'>
-            <div>
-              <h4 class='cursor-pointer font-semibold text-xl mb-1'>{$row['product_name']}</h4>
-              <p class='text-gray-600 mb-2 text-sm line-clamp-2'>{$row['description']}</p>
-              <p class='font-bold text-[rgb(116,142,159)] mb-3'>₱{$row['price']}</p>
-            </div>
+<?php while ($row = $result->fetch_assoc()): ?>
+  <div class="w-[300px] bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition flex-shrink-0">
+    <img src="https://i1.sndcdn.com/artworks-YKzQGzw6kpjz4xoL-b6nyFw-t1080x1080.jpg" class="w-full h-48 object-cover cursor-pointer" alt="<?= htmlspecialchars($row['product_name']) ?>">
+    <div class="p-5 flex flex-col h-[260px] justify-between">
+      <div>
+        <h4 class="cursor-pointer font-semibold text-xl mb-1"><?= htmlspecialchars($row['product_name']) ?></h4>
+        <p class="text-gray-600 mb-2 text-sm line-clamp-2"><?= htmlspecialchars($row['description']) ?></p>
+        <p class="text-gray-500 text-sm mb-2">Stock available: <?= (int)$row['stock'] ?></p>
+        <p class="font-bold text-[rgb(116,142,159)] mb-3">₱<?= number_format((float)$row['price'], 2) ?></p>
+      </div>
 
-            <!-- Quantity -->
-            <div class='flex items-center justify-center space-x-3 mb-3'>
-              <button class='decrement bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400'>−</button>
-              <input type='number' value='1' min='1' class='quantity w-12 text-center border border-gray-300 rounded'>
-              <button class='increment bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400'>+</button>
-            </div>
+      <!-- Quantity -->
+      <div class="flex items-center justify-center space-x-3 mb-3">
+        <button type="button" class="decrement bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400">−</button>
 
-            <!-- Action buttons -->
-            <div class='flex gap-2'>
-              <button 
-                class='addToCart bg-[rgb(116,142,159)] text-white px-3 py-2 rounded hover:bg-[rgb(100,123,136)] flex-1 cursor-pointer'
-                data-product_id='{$row['product_id']}'
-                data-name='{$row['product_name']}'
-                data-price='{$row['price']}'
-              >
-                Add to Cart
-              </button>
+        <input
+          type="number"
+          value="0"
+          min="0"
+          max="<?= (int)$row['stock'] ?>"
+          class="quantity w-12 text-center border border-gray-300 rounded"
+          onkeydown="return false"
+          onpaste="return false"
+        />
 
-              <button 
-                class='buyNow bg-gray-800 text-white px-3 py-2 rounded hover:bg-gray-700 flex-1 cursor-pointer'
-                data-product_id='{$row['product_id']}'
-                data-name='{$row['product_name']}'
-                data-price='{$row['price']}'
-              >
-                Buy Now
-              </button>
-            </div>
-          </div>
-        </div>
-        ";
-      }
-    } else {
-      echo "<p>No products found.</p>";
-    }
-    ?>
+        <button type="button" class="increment bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400">+</button>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex gap-2">
+        <button
+          class="addToCart bg-[rgb(116,142,159)] text-white px-3 py-2 rounded hover:bg-[rgb(100,123,136)] flex-1 cursor-pointer"
+          data-product_id="<?= (int)$row['product_id'] ?>"
+          data-name="<?= htmlspecialchars($row['product_name']) ?>"
+          data-price="<?= htmlspecialchars($row['price']) ?>"
+        >
+          Add to Cart
+        </button>
+
+        <button
+          class="buyNow bg-gray-800 text-white px-3 py-2 rounded hover:bg-gray-700 flex-1 cursor-pointer"
+          data-product_id="<?= (int)$row['product_id'] ?>"
+          data-name="<?= htmlspecialchars($row['product_name']) ?>"
+          data-price="<?= htmlspecialchars($row['price']) ?>"
+        >
+          Buy Now
+        </button>
+      </div>
+    </div>
+  </div>
+<?php endwhile; ?>
+
   </div>
 </section>
 
@@ -212,6 +216,13 @@ include 'db_connect.php';
   </div>
 </div>
 
+<!-- THIS IS WHERE THE MAIN SHOP IS JUST IN ANOTHER PHP FILE -->
+
+<div id="content" style = "height: 50%; width: 50%">
+  <?php include 'products.php'; ?>
+</div>
+
+
 
 <script>
 const isLoggedIn = <?php echo $isLoggedIn ? 'true' : 'false'; ?>;
@@ -222,6 +233,7 @@ const showRegister = document.getElementById("showRegister");
 const showLogin = document.getElementById("showLogin");
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
+const loginBtn = document.getElementById('openLoginPopup');
 
 // Open modal with animation
 function openAuthModal() {
@@ -257,13 +269,72 @@ showLogin.addEventListener("click", (e) => {
 // Trigger popup when user not logged in
 document.querySelectorAll(".addToCart, .buyNow").forEach(btn => {
   btn.addEventListener("click", (e) => {
+    const product_id = btn.dataset.product_id;
+    const name = btn.dataset.name;
+    const price = btn.dataset.price;
+    const quantity = btn.closest('.flex.flex-col').querySelector('.quantity').value;
+
     if (!isLoggedIn) {
       e.preventDefault();
-      openAuthModal();
+      openAuthModal(); // Show login/register popup
       return;
+    }
+
+    // If user is logged in, redirect to proper page
+    if (btn.classList.contains('addToCart')) {
+      window.location.href = `add_to_cart.php?product_id=${product_id}&name=${encodeURIComponent(name)}&price=${price}&quantity=${quantity}`;
+    } else if (btn.classList.contains('buyNow')) {
+      window.location.href = `buy_now.php?product_id=${product_id}&name=${encodeURIComponent(name)}&price=${price}&quantity=${quantity}`;
     }
   });
 });
+
+
+// FOR USER PROFILE IF NOT LOGGED IN
+loginBtn?.addEventListener('click', () => {
+  openAuthModal();
+});
+
+// FOR SLIDER
+const slider = document.getElementById('productSlider');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+if (slider && prevBtn && nextBtn) {
+  prevBtn.addEventListener('click', () => {
+    slider.scrollBy({
+      left: -300,
+      behavior: 'smooth'
+    });
+  });
+
+  nextBtn.addEventListener('click', () => {
+    slider.scrollBy({
+      left: 300,
+      behavior: 'smooth'
+    });
+  });
+}
+
+// Quantity increment/decrement
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.addEventListener('click', (e) => {
+    if (e.target.classList.contains('increment')) {
+      const input = e.target.previousElementSibling;
+      const max = parseInt(input.max);
+      let val = parseInt(input.value);
+      if (val < max) input.value = val + 1;
+    }
+
+    if (e.target.classList.contains('decrement')) {
+      const input = e.target.nextElementSibling;
+      let val = parseInt(input.value);
+      if (val > 1) input.value = val - 1;
+    }
+  });
+});
+
+
+
 </script>
 
 

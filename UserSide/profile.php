@@ -22,7 +22,7 @@ if ($result && $result->num_rows > 0) {
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head>`
   <meta charset="UTF-8">
   <title>User Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>

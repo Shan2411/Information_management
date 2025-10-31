@@ -30,60 +30,85 @@ include 'db_connect.php';
 <body class="bg-gray-50 text-gray-800">
 
 <header class="bg-[rgb(116,142,159)] text-white sticky top-0 z-50 shadow-md">
-  <div class="max-w-6xl mx-auto flex items-center justify-between py-4 pl-4 pr-6">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
 
     <!-- Left: Logo -->
-    <a href="#" class="text-2xl font-bold whitespace-nowrap">Electronic Device Market</a>
+    <a href="#" class="text-2xl font-bold tracking-wide hover:opacity-90 transition">
+      Electronic Device Market
+    </a>
 
-    <!-- Middle: Search Bar -->
-    <div class="flex-1 mx-7 max-w-[400px]">
-      <form action="search.php" method="GET" class="flex">
-        <input 
-          type="text" 
-          name="q" 
-          placeholder="Search products..." 
-          class="w-full rounded-l-md px-3 py-2 text-gray-700 focus:outline-none"
-        >
-        <button 
-          type="submit" 
-          class="bg-gray-800 text-white px-4 py-2 rounded-r-md hover:bg-gray-700 transition"
-        >
-          🔍
-        </button>
-      </form>
-    </div>
+    <!-- Center: Navigation -->
+    <nav class="hidden md:flex items-center space-x-8 text-[15px] font-medium">
+      <a href="#" class="underline hover:text-gray-200 transition">Home</a>
+      <a href="mainproducts.php" class="hover:text-gray-200 transition">Products</a>
+      <a href="#contact" class="hover:text-gray-200 transition">Contact</a>
+    </nav>
 
-    <!-- Right: Navigation + Profile -->
-    <div class="flex items-center space-x-6 font-medium">
-      <nav class="space-x-6">
-        <a href="#" class="hover:text-gray-200">Home</a>
-        <a href="#products" class="hover:text-gray-200">Products</a>
-        <a href="#contact" class="hover:text-gray-200">Contact</a>
-      </nav>
+    <!-- Right: Cart + Profile / Auth -->
+    <div class="flex items-center space-x-4">
+ <?php if (isset($_SESSION['user_id'])): ?>
+  <!-- Logged in: Cart Button -->
+            <a href="cart.php" 
+              class="flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-full transition">
+              <span class="text-xl">🛒</span>
+              <span class="hidden sm:inline text-sm font-semibold">View Cart</span>
+            </a>
 
-      <!-- Person Icon -->
-      <?php if (isset($_SESSION['user_id'])): ?>
-        <!-- If logged in -->
-        <a href="profile.php" class="hover:text-gray-200 text-2xl ml-6">👤</a>
-      <?php else: ?>
-        <!-- If NOT logged in, show popup instead of redirect -->
-        <button 
-          id="openLoginPopup" 
-          class="hover:text-gray-200 text-2xl ml-6 focus:outline-none cursor-pointer"
-        >
-          👤
-        </button>
-      <?php endif; ?>
+            <!-- Logged in: Profile Button -->
+            <a href="profile.php" 
+              class="flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-full transition">
+              <span class="text-xl">👤</span>
+              <span class="hidden sm:inline text-sm font-semibold">Profile</span>
+            </a>
+
+          <?php else: ?>
+            <!-- Not logged in: Cart Button -->
+            <button 
+              class="openLoginPopup flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-full transition focus:outline-none">
+              <span class="text-xl">🛒</span>
+              <span class="hidden sm:inline text-sm font-semibold">View Cart</span>
+            </button>
+
+            <!-- Not logged in: Profile/Login Button -->
+            <button 
+              class="openLoginPopup flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-full transition focus:outline-none">
+              <span class="text-xl">👤</span>
+              <span class="hidden sm:inline text-sm font-semibold">Login</span>
+            </button>
+          <?php endif; ?>
+
+      <!-- Mobile Menu Button -->
+      <button id="menuBtn" class="md:hidden text-2xl focus:outline-none hover:opacity-80">☰</button>
     </div>
   </div>
+
+  <!-- Mobile Navigation (hidden by default) -->
+  <nav id="mobileNav" class="hidden flex-col bg-[rgb(106,132,149)] text-white md:hidden">
+    <a href="#" class="py-3 px-6 hover:bg-[rgb(96,122,139)] transition">Home</a>
+    <a href="mainproducts.php" class="py-3 px-6 hover:bg-[rgb(96,122,139)] transition">Products</a>
+    <a href="#contact" class="py-3 px-6 hover:bg-[rgb(96,122,139)] transition">Contact</a>
+    <a href="cart.php" class="py-3 px-6 hover:bg-[rgb(96,122,139)] transition">View Cart</a>
+  </nav>
+
+  <script>
+    // Simple mobile menu toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileNav = document.getElementById('mobileNav');
+    if (menuBtn && mobileNav) {
+      menuBtn.addEventListener('click', () => {
+        mobileNav.classList.toggle('hidden');
+      });
+    }
+  </script>
 </header>
+
 
 
   <!-- HERO -->
   <section class="bg-[rgb(116,142,159)] text-white py-20 text-center">
     <h2 class="text-4xl font-bold mb-4">Shop the Latest Electronics</h2>
     <p class="text-lg mb-6">Smart devices, powerful laptops, and next-gen gadgets.</p>
-    <a href="#products" class="bg-white text-[rgb(116,142,159)] px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">Shop Now</a>
+    <a href="mainproducts.php" class="bg-white text-[rgb(116,142,159)] px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">Shop Now</a>
   </section>
 
 
@@ -165,7 +190,6 @@ include 'db_connect.php';
   </div>
 </section>
 
-
 <!-- Login/Register Popup -->
 <div id="authModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[999]">
   <div class="bg-white rounded-2xl shadow-lg w-[400px] max-w-[90%] p-8 relative transition-all duration-300 scale-95 opacity-0" id="authBox">
@@ -215,14 +239,6 @@ include 'db_connect.php';
 
   </div>
 </div>
-
-<!-- THIS IS WHERE THE MAIN SHOP IS JUST IN ANOTHER PHP FILE -->
-
-<div id="content" style = "height: 50%; width: 50%">
-  <?php include 'products.php'; ?>
-</div>
-
-
 
 <script>
 const isLoggedIn = <?php echo $isLoggedIn ? 'true' : 'false'; ?>;
@@ -291,9 +307,11 @@ document.querySelectorAll(".addToCart, .buyNow").forEach(btn => {
 
 
 // FOR USER PROFILE IF NOT LOGGED IN
-loginBtn?.addEventListener('click', () => {
-  openAuthModal();
+// FOR PROFILE AND CART BUTTONS IF NOT LOGGED IN
+document.querySelectorAll('.openLoginPopup').forEach(btn => {
+  btn.addEventListener('click', openAuthModal);
 });
+
 
 // FOR SLIDER
 const slider = document.getElementById('productSlider');
@@ -333,10 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-
-
 </script>
-
 
   <!-- FOOTER -->
   <footer class="bg-[rgb(116,142,159)] text-white text-center py-6">

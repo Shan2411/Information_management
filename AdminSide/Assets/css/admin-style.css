@@ -1,0 +1,339 @@
+/* =======================================================
+   📘 ADMIN SYSTEM MAIN STYLESHEET
+   File: admin-style.css
+   Description: Unified styling for all admin-side pages
+   Author: Ves Dizl
+   ======================================================= */
+
+
+/* ============= GLOBAL RESET & BASE STYLES ============= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background-color: #f4f6f8;
+  color: #333;
+  line-height: 1.6;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* =======================================================
+   🔷 NAVBAR (COMMON TO ALL)
+   ======================================================= */
+.navbar {
+  background-color: #2d3748;
+  color: #fff;
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #38bdf8;
+}
+
+.navbar a {
+  color: #fff;
+  margin-left: 20px;
+  transition: 0.3s;
+}
+
+.navbar a:hover {
+  color: #38bdf8;
+}
+
+/* =======================================================
+   🧭 SIDEBAR (COMMON TO ALL)
+   ======================================================= */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 230px;
+  background-color: #1e293b;
+  padding-top: 60px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.sidebar a {
+  padding: 15px 20px;
+  color: #e2e8f0;
+  transition: 0.3s;
+  font-size: 15px;
+}
+
+.sidebar a:hover, .sidebar a.active {
+  background-color: #334155;
+  color: #38bdf8;
+}
+
+.main-content {
+  margin-left: 230px;
+  padding: 30px;
+  min-height: 100vh;
+}
+
+/* =======================================================
+   🏠 DASHBOARD PAGE (dashboard.php)
+   ======================================================= */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card h3 {
+  font-size: 1.1rem;
+  color: #64748b;
+}
+
+.card .count {
+  font-size: 2.2rem;
+  color: #38bdf8;
+  font-weight: bold;
+}
+
+/* =======================================================
+   💻 PRODUCTS PAGE (products.php)
+   ======================================================= */
+.products-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn {
+  background-color: #38bdf8;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background-color: #0ea5e9;
+}
+
+.table-container {
+  overflow-x: auto;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table thead {
+  background-color: #1e293b;
+  color: #fff;
+}
+
+table th, table td {
+  padding: 12px 16px;
+  text-align: left;
+}
+
+table tr:nth-child(even) {
+  background-color: #f1f5f9;
+}
+
+.actions button {
+  margin-right: 5px;
+}
+
+/* =======================================================
+   👥 USERS PAGE (users.php)
+   ======================================================= */
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-table th, .user-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.user-table th {
+  background-color: #334155;
+  color: #fff;
+}
+
+.user-role {
+  display: inline-block;
+  background-color: #38bdf8;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* =======================================================
+   📦 ORDERS PAGE (orders.php)
+   ======================================================= */
+.status {
+  padding: 4px 10px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.status.pending { background-color: #facc15; color: #000; }
+.status.completed { background-color: #22c55e; }
+.status.cancelled { background-color: #ef4444; }
+
+.order-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.order-table th {
+  background: #1e293b;
+  color: white;
+  padding: 10px 12px;
+}
+
+.order-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* =======================================================
+   🔑 LOGIN PAGE (login.php)
+   ======================================================= */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+}
+
+.login-box {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  width: 360px;
+  text-align: center;
+}
+
+.login-box h2 {
+  color: #0f172a;
+  margin-bottom: 20px;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+}
+
+.login-box button {
+  width: 100%;
+  background-color: #38bdf8;
+  border: none;
+  padding: 10px;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.login-box button:hover {
+  background-color: #0ea5e9;
+}
+
+.error-msg {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+/* =======================================================
+   ⚙️ RESPONSIVENESS
+   ======================================================= */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 180px;
+  }
+
+  .main-content {
+    margin-left: 180px;
+    padding: 20px;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .sidebar {
+    display: none;
+  }
+
+  .main-content {
+    margin: 0;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -30,7 +30,7 @@ $stock = (int)$product['stock'];
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
-\
+
 
     <section class="max-w-6xl mx-auto mt-4 p-4 bg-white rounded-xl shadow-md flex flex-col md:flex-row gap-6 min-h-[90vh]">
 
@@ -127,6 +127,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const buyBtn = document.getElementById('buyNowBtn');
     const quantityInput = document.getElementById('quantity');
 
+    const incrementBtn = document.getElementById('increment');
+    const decrementBtn = document.getElementById('decrement');
+    const totalPrice = document.getElementById('totalPrice');
+    const pricePerItem = <?= $product['price'] ?>;
+
+    // Handle increment/decrement
+    if (incrementBtn && decrementBtn && quantityInput) {
+        incrementBtn.addEventListener('click', () => {
+            let value = parseInt(quantityInput.value);
+            if (value < stock) {
+                value++;
+                quantityInput.value = value;
+                updateTotal();
+            }
+        });
+
+        decrementBtn.addEventListener('click', () => {
+            let value = parseInt(quantityInput.value);
+            if (value > 1) {
+                value--;
+                quantityInput.value = value;
+                updateTotal();
+            }
+        });
+    }
+
+    // Update total price
+    function updateTotal() {
+        const qty = parseInt(quantityInput.value) || 1;
+        totalPrice.textContent = `₱${(pricePerItem * qty).toFixed(2)}`;
+    }
+
+    // Update total price when manually changing input
+    quantityInput.addEventListener('input', updateTotal);
+
+
     // Update links dynamically
     function getQuantity() {
         return parseInt(quantityInput?.value || 1);
@@ -141,18 +177,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 openAuthModal();
                 return;
             }
+
             if (stock <= 0) {
                 alert("Sorry, this product is out of stock.");
                 return;
             }
 
             const quantity = getQuantity();
-            try {
-                const response = await fetch(`add_to_cart.php?product_id=<?= $product['product_id'] ?>&quantity=${quantity}`);
-                const data = await response.json();
 
+            try {
+                const response = await fetch(
+                    `add_to_cart.php?product_id=<?= $product['product_id'] ?>&quantity=${quantity}`,
+                    {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    }
+                );
+
+                const data = await response.json();
                 if (data.success) {
-                    // ✅ Show popup (customize this if you have a modal/toast system)
                     alert("✅ " + data.message);
                 } else {
                     alert("❌ " + data.message);
@@ -164,34 +206,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+
     // Buy Now (same logic but redirects to checkout)
     if (buyBtn) {
-        buyBtn.addEventListener('click', async (e) => {
+        buyBtn.addEventListener('click', (e) => {
             e.preventDefault();
 
-            if (!loggedIn) {
-                openAuthModal();
-                return;
-            }
-            if (stock <= 0) {
-                alert("Sorry, this product is out of stock.");
+            const quantity = parseInt(quantityInput.value) || 1;
+
+            if (quantity > stock) {
+                alert("⚠️ Quantity exceeds stock.");
+                quantityInput.value = stock;
                 return;
             }
 
-            const quantity = getQuantity();
-            try {
-                const response = await fetch(`add_to_cart.php?product_id=<?= $product['product_id'] ?>&quantity=${quantity}`);
-                const data = await response.json();
-
-                if (data.success) {
-                    window.location.href = `checkout.php?product_id=<?= $product['product_id'] ?>&quantity=${quantity}`;
-                } else {
-                    alert("❌ " + data.message);
-                }
-            } catch (error) {
-                alert("⚠️ Failed to proceed. Please try again.");
-                console.error(error);
-            }
+            // Simple redirect to checkout.php with selected quantity
+            window.location.href = `checkout.php?product_id=<?= $product['product_id'] ?>&quantity=${quantity}`;
         });
     }
 });

@@ -1,7 +1,7 @@
 <?php
 include 'db_connect.php';
 session_start();
-include 'header.php';
+
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: HomepageUser.php");
@@ -45,7 +45,8 @@ $total_price = $product['price'] * $quantity;
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
-
+  
+  <?php include 'header.php'; ?> 
   <!-- ✅ Top Row: Back Button (left) + Checkout Title (center) -->
   <div class="max-w-5xl mx-auto mt-8 mb-4 px-2 flex items-center justify-between">
     <a href="mainproducts.php" 

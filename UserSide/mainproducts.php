@@ -106,47 +106,38 @@ $result = $stmt->get_result();
     </form>
   </section>
 
-  <!-- PRODUCT GRID -->
-  <section class="max-w-7xl mx-auto mt-10 px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-    <?php if ($result->num_rows > 0): ?>
-      <?php while ($row = $result->fetch_assoc()): ?>
-        <div class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-xl transition duration-300">
-          <img 
-            src="<?= htmlspecialchars($row['image_path'] ?? 'https://i1.sndcdn.com/artworks-YKzQGzw6kpjz4xoL-b6nyFw-t1080x1080.jpg') ?>" 
-            alt="<?= htmlspecialchars($row['product_name']) ?>" 
-            class="w-full h-48 object-cover"
-          >
-          <div class="p-5 flex flex-col justify-between h-[250px]">
-            <div>
-              <h3 class="font-semibold text-lg mb-1"><?= htmlspecialchars($row['product_name']) ?></h3>
-              <p class="text-gray-600 text-sm line-clamp-2 mb-2"><?= htmlspecialchars($row['description']) ?></p>
-              <p class="font-bold text-[rgb(116,142,159)] mb-3">₱<?= number_format($row['price'], 2) ?></p>
-            </div>
-            <div class="flex gap-2">
-              <button 
-                class="addToCart bg-[rgb(116,142,159)] text-white py-2 px-3 rounded-lg hover:bg-[rgb(100,123,136)] flex-1 transition"
-                data-product_id="<?= $row['product_id'] ?>"
-                data-name="<?= htmlspecialchars($row['product_name']) ?>"
-                data-price="<?= $row['price'] ?>"
-              >
-                Add to Cart
-              </button>
-              <button 
-                class="buyNow bg-gray-800 text-white py-2 px-3 rounded-lg hover:bg-gray-700 flex-1 transition"
-                data-product_id="<?= $row['product_id'] ?>"
-                data-name="<?= htmlspecialchars($row['product_name']) ?>"
-                data-price="<?= $row['price'] ?>"
-              >
-                Buy Now
-              </button>
-            </div>
+  
+<!-- PRODUCT GRID -->
+<section class="max-w-7xl mx-auto mt-10 px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+  <?php if ($result->num_rows > 0): ?>
+    <?php while ($row = $result->fetch_assoc()): ?>
+      <div class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-xl transition duration-300">
+        <img 
+          src="<?= htmlspecialchars($row['image_path'] ?? 'https://i1.sndcdn.com/artworks-YKzQGzw6kpjz4xoL-b6nyFw-t1080x1080.jpg') ?>" 
+          alt="<?= htmlspecialchars($row['product_name']) ?>" 
+          class="w-full h-48 object-cover"
+        >
+        <div class="p-5 flex flex-col justify-between h-[250px]">
+          <div>
+            <h3 class="font-semibold text-lg mb-1"><?= htmlspecialchars($row['product_name']) ?></h3>
+            <p class="text-gray-600 text-sm line-clamp-2 mb-2"><?= htmlspecialchars($row['description']) ?></p>
+            <p class="text-gray-500 text-sm mb-1">Stock available: <?= (int)$row['stock'] ?></p>
+            <p class="text-gray-500 text-sm mb-2">Items sold: <?= (int)$row['sold_count'] ?></p>
+            <p class="font-bold text-[rgb(116,142,159)] mb-3">₱<?= number_format($row['price'], 2) ?></p>
           </div>
+
+          <!-- View Details Button -->
+          <a href="product_details.php?product_id=<?= (int)$row['product_id'] ?>" 
+             class="text-center bg-[rgb(116,142,159)] text-white py-2 px-3 rounded-lg hover:bg-[rgb(100,123,136)] transition">
+            View Details
+          </a>
         </div>
-      <?php endwhile; ?>
-    <?php else: ?>
-      <p class="col-span-full text-center text-gray-600 text-lg mt-10">No products found.</p>
-    <?php endif; ?>
-  </section>
+      </div>
+    <?php endwhile; ?>
+  <?php else: ?>
+    <p class="col-span-full text-center text-gray-600 text-lg mt-10">No products found.</p>
+  <?php endif; ?>
+</section>
 
   
 

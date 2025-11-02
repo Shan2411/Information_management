@@ -29,78 +29,7 @@ include 'db_connect.php';
 
 <body class="bg-gray-50 text-gray-800">
 
-<header class="bg-[rgb(116,142,159)] text-white sticky top-0 z-50 shadow-md">
-  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-
-    <!-- Left: Logo -->
-    <a href="#home" class="text-2xl font-bold tracking-wide hover:opacity-90 transition">
-      Electronic Device Market
-    </a>
-
-    <!-- Center: Navigation -->
-    <nav class="hidden md:flex items-center space-x-8 text-[15px] font-medium">
-      <a href="#home" class="hover:text-gray-200 transition">Home</a>
-      <a href="mainproducts.php" class="hover:text-gray-200 transition">Products</a>
-      <a href="about.php" class="hover:text-gray-200 transition">About Us</a>
-    </nav>
-
-    <!-- Right: Cart + Profile / Auth -->
-    <div class="flex items-center space-x-4">
- <?php if (isset($_SESSION['user_id'])): ?>
-  <!-- Logged in: Cart Button -->
-            <a href="viewcart.php" 
-              class="flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-full transition">
-              <span class="text-xl">🛒</span>
-              <span class="hidden sm:inline text-sm font-semibold">View Cart</span>
-            </a>
-
-            <!-- Logged in: Profile Button -->
-            <a href="profile.php" 
-              class="flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-full transition">
-              <span class="text-xl">👤</span>
-              <span class="hidden sm:inline text-sm font-semibold">Profile</span>
-            </a>
-
-          <?php else: ?>
-            <!-- Not logged in: Cart Button -->
-            <button 
-              class="openLoginPopup flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-full transition focus:outline-none">
-              <span class="text-xl">🛒</span>
-              <span class="hidden sm:inline text-sm font-semibold">View Cart</span>
-            </button>
-
-            <!-- Not logged in: Profile/Login Button -->
-            <button 
-              class="openLoginPopup flex items-center gap-2 bg-white/15 hover:bg-white/25 px-3 py-2 rounded-full transition focus:outline-none">
-              <span class="text-xl">👤</span>
-              <span class="hidden sm:inline text-sm font-semibold">Login</span>
-            </button>
-          <?php endif; ?>
-
-      <!-- Mobile Menu Button -->
-      <button id="menuBtn" class="md:hidden text-2xl focus:outline-none hover:opacity-80">☰</button>
-    </div>
-  </div>
-
-  <!-- Mobile Navigation (hidden by default) -->
-  <nav id="mobileNav" class="hidden flex-col bg-[rgb(106,132,149)] text-white md:hidden">
-    <a href="#" class="py-3 px-6 hover:bg-[rgb(96,122,139)] transition">Home</a>
-    <a href="mainproducts.php" class="py-3 px-6 hover:bg-[rgb(96,122,139)] transition">Products</a>
-    <a href="#contact" class="py-3 px-6 hover:bg-[rgb(96,122,139)] transition">Contact</a>
-    <a href="cart.php" class="py-3 px-6 hover:bg-[rgb(96,122,139)] transition">View Cart</a>
-  </nav>
-
-  <script>
-    // Simple mobile menu toggle
-    const menuBtn = document.getElementById('menuBtn');
-    const mobileNav = document.getElementById('mobileNav');
-    if (menuBtn && mobileNav) {
-      menuBtn.addEventListener('click', () => {
-        mobileNav.classList.toggle('hidden');
-      });
-    }
-  </script>
-</header>
+    <?php include 'header.php'; ?>
 
 
 
@@ -135,60 +64,30 @@ include 'db_connect.php';
 
   <!-- Scrollable container -->
   <div id="productSlider" class="flex space-x-6 overflow-x-auto no-scrollbar scroll-container px-2 scroll-smooth">
-<?php while ($row = $result->fetch_assoc()): ?>
-  <div class="w-[300px] bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition flex-shrink-0">
-    <img src="https://i1.sndcdn.com/artworks-YKzQGzw6kpjz4xoL-b6nyFw-t1080x1080.jpg" class="w-full h-48 object-cover cursor-pointer" alt="<?= htmlspecialchars($row['product_name']) ?>">
-    <div class="p-5 flex flex-col h-[260px] justify-between">
-      <div>
-        <h4 class="cursor-pointer font-semibold text-xl mb-1"><?= htmlspecialchars($row['product_name']) ?></h4>
-        <p class="text-gray-600 mb-2 text-sm line-clamp-2"><?= htmlspecialchars($row['description']) ?></p>
-        <p class="text-gray-500 text-sm mb-2">Stock available: <?= (int)$row['stock'] ?></p>
-        <p class="font-bold text-[rgb(116,142,159)] mb-3">₱<?= number_format((float)$row['price'], 2) ?></p>
+    <?php while ($row = $result->fetch_assoc()): ?>
+      <div class="w-[300px] bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition flex-shrink-0 flex flex-col">
+        <img src="<?= htmlspecialchars($row['image_path'] ?? 'https://i1.sndcdn.com/artworks-YKzQGzw6kpjz4xoL-b6nyFw-t1080x1080.jpg') ?>" class="w-full h-48 object-cover" alt="<?= htmlspecialchars($row['product_name']) ?>">
+        <div class="p-5 flex flex-col justify-between flex-1">
+          <div>
+            <h4 class="font-semibold text-xl mb-1"><?= htmlspecialchars($row['product_name']) ?></h4>
+            <p class="text-gray-600 mb-2 text-sm line-clamp-2"><?= htmlspecialchars($row['description']) ?></p>
+            <p class="text-gray-500 text-sm mb-1">Stock available: <?= (int)$row['stock'] ?></p>
+            <p class="text-gray-500 text-sm mb-2">Items sold: <?= (int)$row['sold_count'] ?></p>
+            <p class="font-bold text-[rgb(116,142,159)] mb-3">₱<?= number_format((float)$row['price'], 2) ?></p>
+          </div>
+
+          <!-- View Details Button -->
+          <a href="product_details.php?product_id=<?= (int)$row['product_id'] ?>" 
+             class="text-center bg-[rgb(116,142,159)] text-white py-2 px-3 rounded-lg hover:bg-[rgb(100,123,136)] transition mt-3">
+            View Details
+          </a>
+        </div>
       </div>
-
-      <!-- Quantity -->
-      <div class="flex items-center justify-center space-x-3 mb-3">
-        <button type="button" class="decrement bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400">−</button>
-
-        <input
-          type="number"
-          value="0"
-          min="0"
-          max="<?= (int)$row['stock'] ?>"
-          class="quantity w-12 text-center border border-gray-300 rounded"
-          onkeydown="return false"
-          onpaste="return false"
-        />
-
-        <button type="button" class="increment bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400">+</button>
-      </div>
-
-      <!-- Action buttons -->
-      <div class="flex gap-2">
-        <button
-          class="addToCart bg-[rgb(116,142,159)] text-white px-3 py-2 rounded hover:bg-[rgb(100,123,136)] flex-1 cursor-pointer"
-          data-product_id="<?= (int)$row['product_id'] ?>"
-          data-name="<?= htmlspecialchars($row['product_name']) ?>"
-          data-price="<?= htmlspecialchars($row['price']) ?>"
-        >
-          Add to Cart
-        </button>
-
-        <button
-          class="buyNow bg-gray-800 text-white px-3 py-2 rounded hover:bg-gray-700 flex-1 cursor-pointer"
-          data-product_id="<?= (int)$row['product_id'] ?>"
-          data-name="<?= htmlspecialchars($row['product_name']) ?>"
-          data-price="<?= htmlspecialchars($row['price']) ?>"
-        >
-          Buy Now
-        </button>
-      </div>
-    </div>
-  </div>
-<?php endwhile; ?>
-
+    <?php endwhile; ?>
   </div>
 </section>
+
+
 
 <!-- Login/Register Popup -->
 <div id="authModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[999]">

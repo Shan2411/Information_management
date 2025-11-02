@@ -2,6 +2,8 @@
 session_start();
 include 'db_connect.php';
 
+header('Content-Type: application/json'); // always send JSON
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
@@ -24,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $row['user_id'];
             $_SESSION['username'] = $row['username'];
             echo json_encode(['success' => true]);
-            header("Location: homepageUser.php");
             exit();
         }
         // If password is still plain (old users)
@@ -38,14 +39,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $row['user_id'];
             $_SESSION['username'] = $row['username'];
             echo json_encode(['success' => true]);
-            header("Location: homepageUser.php");
             exit();
         }
         else {
             echo json_encode(['success' => false, 'message' => 'Invalid password.']);
+            exit();
         }
     } else {
         echo json_encode(['success' => false, 'message' => 'User not found.']);
+        exit();
     }
 
     $stmt->close();

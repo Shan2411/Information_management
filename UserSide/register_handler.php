@@ -4,10 +4,12 @@ include 'db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
     $password = trim($_POST['password']);
     $confirm_password = trim($_POST['confirm_password']);
 
-    if (empty($username) || empty($password) || empty($confirm_password)) {
+    // Basic validation
+    if (empty($username) || empty($email) || empty($password) || empty($confirm_password)) {
         echo json_encode(['success' => false, 'message' => 'Please fill in all fields.']);
         exit;
     }
@@ -18,31 +20,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check if username already exists
-    $check = $conn->prepare("SELECT user_id FROM users WHERE username = ?");
-    $check->bind_param("s", $username);
-    $check->execute();
-    $check->store_result();
+    $stmt = $conn->prepare("SELECT user_id FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $stmt->store_result();
 
-    if ($check->num_rows > 0) {
+    if ($stmt->num_rows > 0) {
         echo json_encode(['success' => false, 'message' => 'Username already exists.']);
         exit;
     }
 
-    $check->close();
+    $stmt->close();
 
-    // Insert new user
-    $hashed = password_hash($password, PASSWORD_DEFAULT);
-    $stmt = $conn->prepare("INSERT INTO users (username, password, created_date) VALUES (?, ?, NOW())");
-    $stmt->bind_param("ss", $username, $hashed);
+    // Hash password
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+    // Insert user into database
+    $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $username, $email, $hashedPassword);
 
     if ($stmt->execute()) {
-        $_SESSION['user_id'] = $stmt->insert_id;
-        $_SESSION['username'] = $username;
-        echo json_encode(['success' => true]);
+        echo json_encode(['success' => true, 'message' => 'Registration successful.']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Registration failed.']);
+        echo json_encode(['success' => false, 'message' => 'Registration failed. Please try again.']);
     }
 
     $stmt->close();
+    $conn->close();
 }
 ?>

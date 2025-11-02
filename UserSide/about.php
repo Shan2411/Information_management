@@ -19,15 +19,15 @@ session_start();
   <section class="bg-[rgb(116,142,159)] text-white py-20 text-center px-6">
     <h2 class="text-4xl font-bold mb-4">About Us</h2>
     <p class="max-w-3xl mx-auto text-lg leading-relaxed">
-      Welcome to <span class="font-semibold">Electronic Device Market</span> — a prototype e-commerce platform developed by university students.
+      Welcome to <span class="font-semibold">Electronic Device Market</span> — a prototype e-commerce platform developed by University of Caloocan City students.
       Our goal is to demonstrate how an online electronics store can help users explore, compare, and shop for modern devices efficiently.
     </p>
     <p class="max-w-3xl mx-auto text-lg leading-relaxed mt-6">
       This system includes core features such as product listings, a shopping cart, and user authentication — all designed to simulate
-      a real-world web store experience. It was built using <span class="font-semibold">HTML, Tailwind CSS, PHP, and MySQL</span> for academic purposes.
+      a real-world web store experience. It was built using <span class="font-semibold">HTML, Tailwind CSS, PHP, Javascript and MySQL</span> for academic purposes.
     </p>
     <p class="mt-8 text-sm opacity-80">
-      <i>Developed by BS Computer Science students — Class of 2025</i>
+      <i>Developed by BS Computer Science students</i>
     </p>
   </section>
 

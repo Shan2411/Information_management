@@ -45,7 +45,7 @@ $total_price = $product['price'] * $quantity;
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
-  
+
   <?php include 'header.php'; ?> 
   <!-- ✅ Top Row: Back Button (left) + Checkout Title (center) -->
   <div class="max-w-5xl mx-auto mt-8 mb-4 px-2 flex items-center justify-between">
@@ -121,10 +121,20 @@ $total_price = $product['price'] * $quantity;
                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-100"></textarea>
           </div>
 
+          <!-- ✅ Payment Option Dropdown -->
+          <div>
+            <label class="block text-gray-700 text-sm font-medium mb-1">Payment Method</label>
+            <select name="payment_method" required
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring focus:ring-blue-100">
+              <option value="Cash on Delivery" selected>Cash on Delivery</option>
+            </select>
+          </div>
+
           <button type="submit" 
                   class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">
             Confirm Purchase
           </button>
+
         </form>
       </div>
     </div>

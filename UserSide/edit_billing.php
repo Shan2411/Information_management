@@ -18,46 +18,45 @@ $user = $result->fetch_assoc();
 
 // --- Handle form submission ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $first_name = trim($_POST['first_name']);
-  $last_name = trim($_POST['last_name']);
-  $middle_initial = trim($_POST['middle_initial']);
-  $birthdate = $_POST['birthdate'];
-  $email = trim($_POST['email']);
-  $contact_num = trim($_POST['contact_num']);
-  $profile_image_path = $user['profile_image_path']; // keep old one by default
+    $first_name = trim($_POST['first_name']);
+    $last_name = trim($_POST['last_name']);
+    $middle_initial = trim($_POST['middle_initial']);
+    $birthdate = $_POST['birthdate'];
+    $email = trim($_POST['email']);
+    $contact_num = trim($_POST['contact_num']);
+    $profile_image_path = $user['profile_image_path']; // keep old image by default
 
-  // --- Handle file upload if a new image is provided ---
-  if (!empty($_FILES['profile_image']['name'])) {
-    $target_dir = "uploads/";
-    if (!is_dir($target_dir)) {
-      mkdir($target_dir, 0777, true);
+    // --- Handle file upload if a new image is provided ---
+    if (!empty($_FILES['profile_image']['name'])) {
+        $target_dir = "uploads/";
+        if (!is_dir($target_dir)) { mkdir($target_dir, 0777, true); }
+        $file_name = basename($_FILES['profile_image']['name']);
+        $target_file = $target_dir . time() . "_" . $file_name;
+        $allowed_types = ['jpg','jpeg','png','gif'];
+        $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        if (in_array($file_type, $allowed_types)) {
+            if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $target_file)) {
+                $profile_image_path = $target_file;
+            }
+        }
     }
 
-    $file_name = basename($_FILES['profile_image']['name']);
-    $target_file = $target_dir . time() . "_" . $file_name;
-
-    // Only allow image types
-    $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-    $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-    if (in_array($file_type, $allowed_types)) {
-      if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $target_file)) {
-        $profile_image_path = $target_file;
-      }
-    }
-  }
-
-  // --- Update info in database ---
-  $update = $conn->prepare("UPDATE users SET first_name=?, middle_initial=?, last_name=?, birthdate=?, email=?, contact_num=?, profile_image_path=? WHERE user_id=?");
-  $update->bind_param("sssssssi", $first_name, $middle_initial, $last_name, $birthdate, $email, $contact_num, $profile_image_path, $user_id);
-
-    if ($update->execute()) {
-        header("Location: edit_billing_step2.php");
-        exit;
+    // --- Server-side validation for contact number ---
+    if (empty($contact_num) || !preg_match('/^(09\d{9}|\+639\d{9})$/', $contact_num)) {
+        echo "<p style='color:red;'>Please enter a valid Philippine mobile number.</p>";
     } else {
-        echo "<p style='color:red;'>Error updating info. Please try again.</p>";
+        // --- Update info in database ---
+        $update = $conn->prepare("UPDATE users SET first_name=?, middle_initial=?, last_name=?, birthdate=?, email=?, contact_num=?, profile_image_path=? WHERE user_id=?");
+        $update->bind_param("sssssssi", $first_name, $middle_initial, $last_name, $birthdate, $email, $contact_num, $profile_image_path, $user_id);
+        if ($update->execute()) {
+            header("Location: edit_billing_step2.php");
+            exit;
+        } else {
+            echo "<p style='color:red;'>Error updating info. Please try again.</p>";
+        }
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -96,11 +95,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div>
-        <label class="block text-gray-700 font-semibold">Birthdate</label>
-        <input type="date" name="birthdate"
-                value="<?= htmlspecialchars($user['birthdate'] ?? '') ?>"
-                class="w-full border rounded-lg p-2">
+            <label class="block text-gray-700 font-semibold">Birthdate</label>
+            <input type="date" 
+                    name="birthdate" 
+                    id="birthdate"
+                    value="<?= htmlspecialchars($user['birthdate'] ?? '') ?>" 
+                    class="w-full border rounded-lg p-2"
+                    required>
+            <p id="birthdateError" class="text-red-600 text-sm mt-1 hidden">You must be between 18 and 90 years old.</p>
         </div>
+
 
         <div>
         <label class="block text-gray-700 font-semibold">Email</label>
@@ -110,11 +114,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div>
-        <label class="block text-gray-700 font-semibold">Contact Number</label>
-        <input type="text" name="contact_num"
-                value="<?= htmlspecialchars($user['contact_num'] ?? '') ?>"
-                class="w-full border rounded-lg p-2">
+            <label class="block text-gray-700 font-semibold">Contact Number</label>
+            <input type="text" name="contact_num" value="<?= htmlspecialchars($user['contact_num'] ?? '') ?>" class="w-full border rounded-lg p-2" required>
+            <p id="contactError" class="text-red-600 text-sm mt-1 hidden">Please enter a valid Philippine mobile number (09XXXXXXXXX or +639XXXXXXXXX).</p>
         </div>
+
 
 
     <!-- Buttons -->
@@ -133,27 +137,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const form = document.querySelector('form');
-  form.addEventListener('submit', (e) => {
-    const requiredFields = form.querySelectorAll('input[required], textarea[required]');
-    let allFilled = true;
+    const form = document.querySelector('form');
+    const birthdateInput = form.querySelector('input[name="birthdate"]');
+    const contactInput = form.querySelector('input[name="contact_num"]');
+    const contactError = document.getElementById('contactError');
 
-    requiredFields.forEach(field => {
-      if (!field.value.trim()) {
-        allFilled = false;
-        field.classList.add('border-red-500'); // highlight empty field
-      } else {
-        field.classList.remove('border-red-500');
-      }
+    form.addEventListener('submit', (e) => {
+        let allFilled = true;
+
+        // --- Required fields validation ---
+        const requiredFields = form.querySelectorAll('input[required], textarea[required]');
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                allFilled = false;
+                field.classList.add('border-red-500');
+            } else {
+                field.classList.remove('border-red-500');
+            }
+        });
+
+        // --- Birthdate validation ---
+        const birthdateValue = birthdateInput.value;
+        if (birthdateValue) {
+            const today = new Date();
+            const birthDate = new Date(birthdateValue);
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            if (age < 18 || age > 90) {
+                allFilled = false;
+                birthdateInput.classList.add('border-red-500');
+                alert('Your age must be between 18 and 90 years.');
+            } else {
+                birthdateInput.classList.remove('border-red-500');
+            }
+        }
+
+        // --- Philippine contact number validation ---
+        const contactVal = contactInput.value.trim();
+        const phPattern = /^(09\d{9}|\+639\d{9})$/;
+        if (contactVal && !phPattern.test(contactVal)) {
+            allFilled = false;
+            contactInput.classList.add('border-red-500');
+            contactError.classList.remove('hidden');
+        } else {
+            contactInput.classList.remove('border-red-500');
+            contactError.classList.add('hidden');
+        }
+
+        if (!allFilled) {
+            e.preventDefault();
+        }
     });
-
-    if (!allFilled) {
-      e.preventDefault();
-      alert('Please fill in all required fields before proceeding.');
-    }
-  });
 });
 </script>
+
 
 
 </body>

@@ -177,10 +177,33 @@ while ($row = $result->fetch_assoc()) {
       </a>
 
       <?php if (count($cartItems) > 0): ?>
-        <a href="checkout_cart.php" 
-          class="bg-green-600 text-white py-3 px-6 rounded hover:bg-green-700 transition">
+        <button id="checkout-btn"
+                class="bg-green-600 text-white py-3 px-6 rounded hover:bg-green-700 transition">
           Proceed to Checkout
-        </a>
+        </button>
+
+        <script>
+        const checkoutBtn = document.getElementById('checkout-btn');
+
+        checkoutBtn.addEventListener('click', () => {
+          const selectedItems = [];
+          document.querySelectorAll('.select-item:checked').forEach(cb => {
+            const row = cb.closest('tr');
+            selectedItems.push(row.dataset.cartId);
+          });
+
+          if (selectedItems.length === 0) {
+            alert('Please select at least one item to proceed.');
+            return;
+          }
+
+          // Redirect to checkout page with selected cart IDs
+          const params = new URLSearchParams();
+          params.append('cart_ids', selectedItems.join(','));
+          window.location.href = `checkout_cart.php?${params.toString()}`;
+        });
+        </script>
+
       <?php endif; ?>
     </div>
 

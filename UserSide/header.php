@@ -80,12 +80,34 @@ $isLoggedIn = isset($_SESSION['user_id']);
       <h2 class="text-2xl font-bold text-center mb-6 text-[rgb(116,142,159)]">Create Account</h2>
       <form id="registerFormElement" method="POST" class="space-y-4">
         <p id="registerError" class="text-red-600 text-sm mt-2 hidden"></p>
+
         <input type="text" name="username" placeholder="Username" required class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
+        
         <input type="email" name="email" placeholder="Email" required class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
+        
+
+        <input type="text" name="contact_num" placeholder="Contact Number" required
+              class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
+        <p id="contactError" class="text-red-600 text-sm mt-1 hidden">
+            Please enter a valid Philippine mobile number (09XXXXXXXXX or +639XXXXXXXXX).
+        </p>
+
+
+
         <input type="password" name="password" placeholder="Password" required class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
+        
         <input type="password" name="confirm_password" placeholder="Confirm Password" required class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
+        
+        <!-- ✅ Birthday Field -->
+        <label for="birthdate" class="block text-gray-700 font-medium text-sm">Birthdate</label>
+        <input type="date" id="birthdate" name="birthdate" required
+              class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]"
+              max="<?= date('Y-m-d', strtotime('-18 years')) ?>" 
+              min="<?= date('Y-m-d', strtotime('-90 years')) ?>">
+
         <button type="submit" class="w-full bg-[rgb(116,142,159)] text-white py-2 rounded-lg hover:bg-[rgb(100,123,136)] transition">Register</button>
       </form>
+
       <p class="text-center mt-4 text-sm">Already have an account? 
         <a href="#" id="showLogin" class="text-[rgb(116,142,159)] font-semibold hover:underline">Login here</a>
       </p>
@@ -199,10 +221,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // --- AJAX Register ---
+  // --- AJAX Register with Philippine contact number validation ---
   registerFormElement?.addEventListener('submit', async (e) => {
     e.preventDefault();
     registerError.classList.add('hidden');
+
+    // ✅ Contact number validation
+    const contactInput = registerFormElement.querySelector('input[name="contact_num"]');
+    const contactError = registerFormElement.querySelector('#contactError');
+    const contactVal = contactInput?.value.trim();
+    const phPattern = /^(09\d{9}|\+639\d{9})$/;
+
+    if (!contactVal || !phPattern.test(contactVal)) {
+      contactInput.classList.add('border-red-500');
+      contactError?.classList.remove('hidden');
+      return; // prevent submission
+    } else {
+      contactInput.classList.remove('border-red-500');
+      contactError?.classList.add('hidden');
+    }
+
     const formData = new FormData(registerFormElement);
 
     try {
@@ -237,4 +275,5 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
+
 

@@ -22,7 +22,7 @@ if ($result && $result->num_rows > 0) {
 
 <!DOCTYPE html>
 <html lang="en">
-<head>`
+<head>
   <meta charset="UTF-8">
   <title>User Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,14 +30,19 @@ if ($result && $result->num_rows > 0) {
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col items-center py-10">
 
  <!-- Profile Card -->
-<div class="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
+<div class="relative bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
   
+  <!-- X Button at top-right -->
+  <a href="homepageUser.php" 
+     class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-3xl font-bold transition"
+     title="Back to Homepage">&times;</a>
+
   <!-- Profile Image -->
   <div class="flex flex-col items-center">
     <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-[rgb(116,142,159)] mb-4">
       <?php if (!empty($user['profile_image_path'])): ?>
         <img 
-          src="<?= !empty($user['profile_image_path']) ? htmlspecialchars($user['profile_image_path']) : 'https://braverplayers.org/wp-content/uploads/2022/09/braver-blank-pfp.jpg' ?>" 
+          src="<?= htmlspecialchars($user['profile_image_path']) ?>" 
           alt="Profile Picture" 
           class="w-full h-full object-cover"
           onerror="this.onerror=null; this.src='https://braverplayers.org/wp-content/uploads/2022/09/braver-blank-pfp.jpg';"
@@ -73,18 +78,13 @@ if ($result && $result->num_rows > 0) {
 
   <!-- Buttons -->
   <div class="mt-6 flex flex-col space-y-3">
-    <a href="homepageUser.php"
-       class="w-full bg-gray-500 text-white py-2 rounded-lg text-center hover:bg-gray-400 transition duration-200 font-semibold">
-       Back to Homepage
-    </a>
-
     <a href="edit_billing.php"
        class="w-full bg-[rgb(116,142,159)] text-white py-2 rounded-lg text-center hover:bg-[rgb(100,123,136)] transition duration-200 font-semibold">
        Edit Billing & Info
     </a>
 
     <a href="transaction_history.php"
-       class="w-full bg-blue-600 text-white py-2 rounded-lg text-center hover:bg-blue-500 transition duration-200 font-semibold">
+       class="w-full bg-blue-700 text-white py-2 rounded-lg text-center hover:bg-blue-600 transition duration-200 font-semibold">
        View Transaction History
     </a>
 

@@ -93,35 +93,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
   </div>
 
-  <script>
-    
-    function goBack() {
-    // Redirect back to edit_billing.php
-    window.location.href = 'edit_billing.php';
-    }
-    
+<script>
+function goBack() {
+  window.location.href = 'edit_billing.php';
+}
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const form = document.querySelector('form');
-    form.addEventListener('submit', (e) => {
-      const requiredFields = form.querySelectorAll('input[required]');
-      let allFilled = true;
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('form');
+  form.addEventListener('submit', (e) => {
+    const requiredFields = form.querySelectorAll('input[required]');
+    let allFilled = true;
 
-      requiredFields.forEach(field => {
-        if (!field.value.trim()) {
-          allFilled = false;
-          field.classList.add('border-red-500');
-        } else {
-          field.classList.remove('border-red-500');
-        }
-      });
-
-      if (!allFilled) {
-        e.preventDefault();
-        alert('Please fill in all required fields before saving.');
+    requiredFields.forEach(field => {
+      if (!field.value.trim()) {
+        allFilled = false;
+        field.classList.add('border-red-500');
+      } else {
+        field.classList.remove('border-red-500');
       }
     });
+
+    // --- Postal code validation ---
+    const postalInput = form.querySelector('input[name="postal_code"]');
+    const postalVal = postalInput.value.trim();
+    const postalPattern = /^\d{4}$/; // 4 digits only
+    if (!postalPattern.test(postalVal)) {
+      postalInput.classList.add('border-red-500');
+      alert('Please enter a valid 4-digit Philippine postal code.');
+      e.preventDefault();
+      return; // stop form submission here
+    } else {
+      postalInput.classList.remove('border-red-500');
+    }
+
+    if (!allFilled) {
+      e.preventDefault();
+      alert('Please fill in all required fields before saving.');
+    }
   });
-  </script>
+});
+</script>
+
 </body>
 </html>

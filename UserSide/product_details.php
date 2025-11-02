@@ -207,23 +207,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // Buy Now (same logic but redirects to checkout)
-    if (buyBtn) {
-        buyBtn.addEventListener('click', (e) => {
-            e.preventDefault();
+    // Buy Now (check login and redirect)
+if (buyBtn) {
+    buyBtn.addEventListener('click', (e) => {
+        e.preventDefault();
 
-            const quantity = parseInt(quantityInput.value) || 1;
+        // Check if user is logged in
+        if (!loggedIn) {
+            openAuthModal(); // show login modal
+            return;
+        }
 
-            if (quantity > stock) {
-                alert("⚠️ Quantity exceeds stock.");
-                quantityInput.value = stock;
-                return;
-            }
+        const quantity = parseInt(quantityInput.value) || 1;
 
-            // Simple redirect to checkout.php with selected quantity
-            window.location.href = `checkout.php?product_id=<?= $product['product_id'] ?>&quantity=${quantity}`;
-        });
-    }
+        if (quantity > stock) {
+            alert("⚠️ Quantity exceeds stock.");
+            quantityInput.value = stock;
+            return;
+        }
+
+        // Redirect to checkout.php with selected quantity
+        window.location.href = `checkout.php?product_id=<?= $product['product_id'] ?>&quantity=${quantity}`;
+    });
+}
+
 });
 </script>
 

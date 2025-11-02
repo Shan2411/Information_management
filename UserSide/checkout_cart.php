@@ -57,7 +57,7 @@ $total_price = 0;
     <div class="flex flex-col md:flex-row gap-6">
 
       <!-- Order Summary -->
-      <div class="flex-1 border border-gray-200 rounded-lg p-4 overflow-y-auto max-h-[400px]">
+      <div class="flex-1 border border-gray-200 rounded-lg p-4 overflow-y-auto max-h-[800px]">
         <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
 
         <?php if ($cartItems->num_rows > 0): ?>
@@ -89,7 +89,7 @@ $total_price = 0;
       <div class="flex-1 border border-gray-200 rounded-lg p-4">
         <h2 class="text-xl font-semibold mb-4">Shipping Details</h2>
 
-        <form action="process_checkout_cart.php" method="POST" class="space-y-4">
+        <form id="checkoutForm" action="process_checkout_cart.php" method="POST" class="space-y-4">
           <input type="hidden" name="total_price" value="<?= $total_price ?>">
 
           <div>
@@ -105,43 +105,87 @@ $total_price = 0;
           </div>
 
           <div>
-            <label class="block text-gray-700 text-sm font-medium mb-1">Email</label>
-            <input type="email" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required
-                   class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-100">
-          </div>
-
-          <div>
             <label class="block text-gray-700 text-sm font-medium mb-1">Contact Number</label>
             <input type="text" name="contact_num" value="<?= htmlspecialchars($user['contact_num'] ?? '') ?>" required
                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-100">
           </div>
 
-        <div>
-        <label class="block text-gray-700 text-sm font-medium mb-1">Address</label>
-        <textarea name="address" required
-                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-100"></textarea>
-        </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-medium mb-1">Address</label>
+            <textarea name="address" required
+                      class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-100 resize-none h-32"></textarea>
+          </div>
 
-        <!-- ✅ Payment Option Dropdown -->
-        <div>
-        <label class="block text-gray-700 text-sm font-medium mb-1">Payment Method</label>
-        <select name="payment_method" required
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring focus:ring-blue-100">
-            <option value="Cash on Delivery" selected>Cash on Delivery</option>
-        </select>
-        </div>
+          <!-- Payment Option Dropdown -->
+          <div>
+            <label class="block text-gray-700 text-sm font-medium mb-1">Payment Method</label>
+            <select name="payment_method" required
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring focus:ring-blue-100">
+              <option value="Cash on Delivery" selected>Cash on Delivery</option>
+            </select>
+          </div>
 
-        <button type="submit" 
-                class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">
-        Confirm Purchase
-        </button>
+          <!-- Confirmation Checkbox -->
+          <div class="flex items-center mt-4">
+            <input type="checkbox" id="confirmDetails" class="mr-2 accent-green-600" checked>
+            <label for="confirmDetails" class="text-sm text-gray-700">
+              I confirm my address and details are correct.
+            </label>
+          </div>
 
-          </button>
+          <!-- Buttons -->
+            <div class="flex justify-end mt-6">
+            <button id="submitBtn" type="submit"
+                    class="px-6 py-2 rounded-lg font-semibold transition 
+                            disabled:bg-gray-400 disabled:cursor-not-allowed 
+                            bg-green-600 text-white hover:bg-green-700">
+                Confirm Purchase
+            </button>
+            </div>
+
         </form>
       </div>
 
     </div>
   </div>
+
+<script>
+const form = document.getElementById('checkoutForm');
+const submitBtn = document.getElementById('submitBtn');
+const confirmBox = document.getElementById('confirmDetails');
+
+function toggleFormFields() {
+  const fields = form.querySelectorAll('input[type="text"], textarea');
+
+  // Make fields uneditable if checkbox is checked and change background color
+  fields.forEach(field => {
+    field.readOnly = confirmBox.checked;
+    field.classList.toggle('bg-gray-100', confirmBox.checked); // gray background if uneditable
+    field.classList.toggle('bg-white', !confirmBox.checked);   // normal background if editable
+  });
+
+  // Enable/disable button and change color dynamically
+  if (confirmBox.checked) {
+    submitBtn.disabled = false;
+    submitBtn.classList.remove('bg-gray-400', 'text-gray-200');
+    submitBtn.classList.add('bg-green-600', 'text-white');
+  } else {
+    submitBtn.disabled = true;
+    submitBtn.classList.remove('bg-green-600', 'text-white');
+    submitBtn.classList.add('bg-gray-400', 'text-gray-200');
+  }
+}
+
+// Run on page load
+toggleFormFields();
+
+// Listen to checkbox changes
+confirmBox.addEventListener('change', toggleFormFields);
+
+// Monitor input changes
+form.addEventListener('input', toggleFormFields);
+</script>
+
 
 </body>
 </html>

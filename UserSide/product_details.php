@@ -85,7 +85,9 @@ $stock = (int)$product['stock'];
             <div class="flex flex-col gap-2">
                 <div class="flex items-center gap-3">
                 <button id="decrement" class="bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400">−</button>
-                <input type="number" id="quantity" value="1" min="1" max="<?= $stock ?>" class="w-16 text-center border border-gray-300 rounded">
+                <input type="number" id="quantity" value="1" min="1" max="<?= $stock ?>" 
+                class="w-16 text-center border border-gray-300 rounded bg-gray-100 cursor-default" 
+                readonly>
                 <button id="increment" class="bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400">+</button>
                 </div>
 

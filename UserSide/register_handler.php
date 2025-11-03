@@ -7,6 +7,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
     $confirm_password = trim($_POST['confirm_password']);
+    $birthdate = trim($_POST['birthdate']);  // Get the birthdate from the form
+    $contact_num = trim($_POST['contact_num']);
+
+
 
     // Basic validation
     if (empty($username) || empty($email) || empty($password) || empty($confirm_password)) {
@@ -36,8 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Insert user into database
-    $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $username, $email, $hashedPassword);
+    $stmt = $conn->prepare("INSERT INTO users (username, email, password, birthdate, contact_num) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssss", $username, $email, $hashedPassword, $birthdate, $contact_num);
+
+
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Registration successful.']);

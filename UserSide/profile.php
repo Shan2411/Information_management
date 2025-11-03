@@ -83,7 +83,7 @@ if ($result && $result->num_rows > 0) {
        Edit Billing & Info
     </a>
 
-    <a href="transaction_history.php"
+    <a href="transactions.php"
        class="w-full bg-blue-700 text-white py-2 rounded-lg text-center hover:bg-blue-600 transition duration-200 font-semibold">
        View Transaction History
     </a>

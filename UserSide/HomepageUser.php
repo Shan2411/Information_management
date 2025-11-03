@@ -27,7 +27,8 @@ include 'db_connect.php';
   </style>
 </head>
 
-<body class="bg-gray-50 text-gray-800">
+<body class="min-h-screen text-gray-800" 
+  style="background: linear-gradient(135deg, rgba(171, 186, 197, 0.25), rgba(253, 254, 255, 0.3));">
 
     <?php include 'header.php'; ?>
 
@@ -42,7 +43,7 @@ include 'db_connect.php';
 
 
 <!-- FEATURED PRODUCTS -->
-<section id="products" class="max-w-6xl mx-auto py-16 px-6 relative">
+<section id="products" class="max-w-6xl mx-auto py-16 px-6 relative" style="background: linear-gradient(135deg, rgba(237, 243, 247, 0.25), rgba(252, 253, 253, 0.3));">
   <h3 class="text-3xl font-bold text-center mb-10">Our Top Selling Products</h3>
 
   <?php

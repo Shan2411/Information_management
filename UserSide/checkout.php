@@ -2,8 +2,6 @@
 include 'db_connect.php';
 session_start();
 
-
-
 $user_id = $_SESSION['user_id'];
 
 // --- Get product + quantity ---
@@ -105,29 +103,25 @@ $total_price = $product['price'] * $quantity;
        pattern="09[0-9]{9}" 
        title="Enter a valid Philippine mobile number (e.g., 09123456789)"
        class="w-full border border-gray-300 rounded-md px-2.5 py-1.5 text-sm focus:ring focus:ring-blue-100">
-
     </div>
 
     <!-- ADDRESS PART-->
     <div class="space-y-3">
       <div class="flex flex-col">
         <label class="block text-gray-700 font-medium text-sm">Address:</label>
-        <input type="text" name="address" 
-               value="<?= htmlspecialchars($user['address'] ?? '') ?>" 
+        <input type="text" name="address" value="<?= htmlspecialchars($user['address'] ?? '') ?>" required
                class="w-full border rounded-md px-2.5 py-1.5 text-sm">
       </div>
 
       <div class="flex flex-col">
         <label class="block text-gray-700 font-medium text-sm">City:</label>
-        <input type="text" name="city" 
-               value="<?= htmlspecialchars($user['city'] ?? '') ?>" 
+        <input type="text" name="city" value="<?= htmlspecialchars($user['city'] ?? '') ?>" required
                class="w-full border rounded-md px-2.5 py-1.5 text-sm">
       </div>
 
       <div class="flex flex-col">
         <label class="block text-gray-700 font-medium text-sm">Province:</label>
-        <input type="text" name="province" 
-               value="<?= htmlspecialchars($user['province'] ?? '') ?>" 
+        <input type="text" name="province" value="<?= htmlspecialchars($user['province'] ?? '') ?>" required
                class="w-full border rounded-md px-2.5 py-1.5 text-sm">
       </div>
 
@@ -137,7 +131,6 @@ $total_price = $product['price'] * $quantity;
        pattern="[0-9]{4}" 
        title="Enter a valid 4-digit Philippine postal code"
        class="w-full border rounded-md px-2.5 py-1.5 text-sm">
-
       </div>
     </div>
 
@@ -149,33 +142,33 @@ $total_price = $product['price'] * $quantity;
       </select>
     </div>
 
-    <!-- Confirmation Checkbox -->
-    <div class="flex items-center mt-3">
-      <input type="checkbox" id="confirmDetails" class="mr-2 accent-green-600 scale-90" checked>
-      <label for="confirmDetails" class="text-sm text-gray-700">
-        I confirm my address and details are correct.
-      </label>
-    </div>
+  <!-- Confirmation Checkbox -->
+  <div class="flex items-center mt-3">
+    <input type="checkbox" id="confirmDetails" class="mr-2 accent-green-600 scale-90">
+    <label for="confirmDetails" class="text-sm text-gray-700">
+      I confirm my address and details are correct.
+    </label>
+  </div>
+
+<!-- Warning Message -->
+<p id="shippingWarning" class="text-red-600 text-sm mt-2 hidden"></p>
+
 
     <!-- Warning Message -->
-<p id="shippingWarning" class="text-red-600 text-sm mt-2 hidden">
-  Please fill out all shipping details before confirming your purchase.
-</p>
-
+    <p id="shippingWarning" class="text-red-600 text-sm mt-2 hidden"></p>
 
     <!-- Confirm Button -->
    <div class="flex justify-end mt-4">
-  <button id="submitBtn" type="submit"
-          class="px-4 py-1.5 rounded-md font-semibold text-sm transition 
-                 disabled:bg-gray-400 disabled:cursor-not-allowed 
-                 bg-green-600 text-white hover:bg-green-700">
-    Confirm Purchase
-  </button>
-</div>
+      <button id="submitBtn" type="submit"
+              class="px-4 py-1.5 rounded-md font-semibold text-sm transition 
+                     disabled:bg-gray-400 disabled:cursor-not-allowed 
+                     bg-green-600 text-white hover:bg-green-700">
+        Confirm Purchase
+      </button>
+    </div>
 
   </form>
 </div>
-
 
   </div>
 </div>
@@ -189,65 +182,67 @@ const shippingWarning = document.getElementById('shippingWarning');
 function toggleFormFields() {
   const fields = form.querySelectorAll('input[type="text"], textarea');
 
-  // Make fields uneditable if checkbox is checked and change background color
+  // Make fields uneditable if checkbox is checked
   fields.forEach(field => {
     field.readOnly = confirmBox.checked;
-    field.classList.toggle('bg-gray-100', confirmBox.checked); // gray background if uneditable
-    field.classList.toggle('bg-white', !confirmBox.checked);   // normal background if editable
+    field.classList.toggle('bg-gray-100', confirmBox.checked);
+    field.classList.toggle('bg-white', !confirmBox.checked);
   });
 
-  // Check if all fields are filled
-  const allFilled = [...fields].every(field => field.value.trim() !== '');
+  // Grab contact and postal fields
+  const contactField = form.querySelector('input[name="contact_num"]');
+  const postalField = form.querySelector('input[name="postal_code"]');
 
-  // Enable/disable button & show warning
-  if (confirmBox.checked && allFilled) {
-    submitBtn.disabled = false;
-    submitBtn.classList.remove('bg-gray-400', 'text-gray-200');
-    submitBtn.classList.add('bg-green-600', 'text-white');
-    shippingWarning.classList.add('hidden'); // hide warning
-  } else {
+  const contactValid = /^09\d{9}$/.test(contactField.value.trim());
+  const postalValid = /^\d{4}$/.test(postalField.value.trim());
+
+  // Check if any field is empty
+  const anyEmpty = [...fields].some(field => field.value.trim() === '');
+
+  // Disable checkbox if any field is empty or contact/postal invalid
+  if (anyEmpty || !contactValid || !postalValid) {
+    confirmBox.checked = false;
+    confirmBox.disabled = true;
     submitBtn.disabled = true;
     submitBtn.classList.remove('bg-green-600', 'text-white');
     submitBtn.classList.add('bg-gray-400', 'text-gray-200');
 
-    // Show warning if any field is empty
-    if (!allFilled) {
-      shippingWarning.classList.remove('hidden');
+    if (anyEmpty) {
+      shippingWarning.textContent = "Please fill out all shipping details before confirming.";
     } else {
-      shippingWarning.classList.add('hidden');
+      shippingWarning.textContent = "Please enter a valid Contact Number (09XXXXXXXXX) and Postal Code (XXXX).";
     }
-  }
 
-  //WARNINGS FOR CONTACT AND ZIPCODE :D
-  const contactField = form.querySelector('input[name="contact_num"]');
-  const postalField = form.querySelector('input[name="postal_code"]');
-
-  const contactValid = contactField.checkValidity();
-  const postalValid = postalField.checkValidity();
-
-  if (!contactValid || !postalValid) {
-      submitBtn.disabled = true;
-      shippingWarning.textContent = "Please fill out all fields correctly. Ensure your Contact Number is in the 09XXXXXXXXX format and your Postal Code is in the XXXX format.";
-      shippingWarning.classList.remove('hidden');
-  } else if (!allFilled) {
-      shippingWarning.textContent = "Please fill out all shipping details before confirming your purchase.";
-      shippingWarning.classList.remove('hidden');
+    shippingWarning.classList.remove('hidden');
   } else {
-      shippingWarning.classList.add('hidden');
+    confirmBox.disabled = false;
+    shippingWarning.classList.add('hidden');
   }
 
+  // Enable submit button only if checkbox is checked and all fields valid
+  const allFilled = !anyEmpty;
+  const allValid = contactValid && postalValid;
+
+  if (confirmBox.checked && allFilled && allValid) {
+    submitBtn.disabled = false;
+    submitBtn.classList.remove('bg-gray-400', 'text-gray-200');
+    submitBtn.classList.add('bg-green-600', 'text-white');
+  } else if (!confirmBox.disabled) {
+    submitBtn.disabled = true;
+    submitBtn.classList.remove('bg-green-600', 'text-white');
+    submitBtn.classList.add('bg-gray-400', 'text-gray-200');
+  }
 }
 
-// Run on page load
+// Initial check on page load
 toggleFormFields();
 
-// Listen to checkbox changes
-confirmBox.addEventListener('change', toggleFormFields);
-
-// Monitor input changes
+// Event listeners
 form.addEventListener('input', toggleFormFields);
-
+confirmBox.addEventListener('change', toggleFormFields);
 </script>
+
+
 
 </body>
 </html>

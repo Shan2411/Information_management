@@ -44,7 +44,9 @@ $result = $stmt->get_result();
   </head>
 
 
-<body class="bg-gray-100 text-gray-800">
+<body class="min-h-screen text-gray-800" 
+  style="background: linear-gradient(135deg, rgba(171, 186, 197, 0.25), rgba(253, 254, 255, 0.3));">
+
   <!-- Header -->
   <?php include 'header.php'; ?>
 

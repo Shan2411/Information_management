@@ -146,3 +146,20 @@
 .sidebar:hover ~ .main-wrapper .main-content {
     margin-left: 260px;
 }
+
+
+/* --- Logout Button Styling --- */
+#logoutLink {
+  color: #e74c3c;
+  transition: all 0.3s ease;
+}
+
+#logoutLink:hover {
+  background: #e74c3c;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+#logoutLink .material-symbols-outlined {
+  color: inherit;
+}

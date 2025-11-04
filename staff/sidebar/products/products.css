@@ -59,6 +59,7 @@
   margin-bottom: 32px;
 }
 
+
 .search-bar input[type="search"],
 .search-bar select {
   border: 2px solid #d5dce0;
@@ -99,6 +100,15 @@
   color: #fff;
 }
 
+
+#category{
+  padding: 10px;
+  height: 40px;
+}
+#sort{
+  padding: 10px;
+  height: 40px;
+}
 
 
 
@@ -839,6 +849,14 @@ button:active {
 
         
 
+
+
+
+
+
+
+
+        
        /* =========================================================
    GENERAL OVERLAY STYLES (Shared by all modals)
    ========================================================= */

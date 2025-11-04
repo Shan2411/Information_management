@@ -1,0 +1,101 @@
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    /* Mobile Toggle Button */
+    .mobile-toggle {
+        display: block;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1001;
+        background: #2c3e50;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 18px;
+    }
+}
+
+/* Responsive: stack on smaller screens */
+@media (max-width: 900px) {
+    .product-summary {
+        flex-direction: column;
+    }
+}
+
+/* Animations for products */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+
+/* ========== RESPONSIVE FOR PRODUCTS ========== */
+@media (max-width: 768px) {
+    .search-bar {
+        flex-direction: column;
+    }
+
+    .search-bar input[type="search"],
+    .search-bar select {
+        width: 100%;
+    }
+
+    .product-list {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+    }
+}
+
+/*FOR PRODUCTS*/
+@media (max-width: 520px) {
+    .adding-products-overlay-content {
+        padding: 24px;
+    }
+    .adding-products-overlay-content .form-actions button {
+        width: 100%;
+    }
+}
+
+
+/* ========== RESPONSIVE ADJUSTMENTS ========== */
+@media (max-width: 768px) {
+    .floating-add-btn {
+        bottom: 20px;
+        right: 20px;
+        padding: 14px 24px;
+        font-size: 14px;
+    }
+
+    .overlay-content {
+        padding: 30px 20px;
+        max-width: 90%;
+    }
+
+    .overlay-content h2 {
+        font-size: 24px;
+    }
+}
+

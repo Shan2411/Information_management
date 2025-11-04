@@ -1,3 +1,39 @@
+/*
+Git Commit Instructions: GAWIN LANG DAW TO KAPAG MAY GUSTO NANG I UPLOAD
+# 1️⃣ Make sure you’re still on your branch
+git branch
+# (it should show *staff-section* with a star)
+
+# 2️⃣ Stage changes (example if you edited files inside staff/)
+git add staff/
+
+# 3️⃣ Commit changes with a message
+git commit -m "Updated staff dashboard UI and CSS"
+
+# 4️⃣ Push your branch again
+git push origin staff-section
+*/
+
+/* 
+MGA PENDING PA SA STAFF 
+- responsiveness
+- add/edit product form validation (JS/PHP)
+- dynamic data loading (PHP/MySQL)
+- statis search and filter (JS/PHP)
+- connecting product database (PHP/MySQL)
+- archieve UI
+- all oredrs UI
+- pending orders UI
+- completed orders UI
+- cancelled orders UI
+- settings UI
+- profile UI
+- logout functionality (PHP)
+*/
+
+
+
+
 /* Universal Reset */
 * {
     margin: 0;

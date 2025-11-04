@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Interface - Device Market</title>
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="stylesheet" href="orders.css">
+    <link rel="stylesheet" href="../css/responsiveness.css">
+</head>
+<body>
+    <main class="main-wrapper">
+        <!-- Mobile Toggle Button -->
+        <button class="mobile-toggle" id="sidebarToggle">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Device Market</h2>
+            </div>
+            <ul class="sidebar-links">
+                <h4>
+                    <span>Main</span>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="../dashboard/dashboard.html">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <h4>
+                    <span>Inventory</span>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="../products/products.html">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                        <span>Products</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../archived/archived.html">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                        <span>Archived Products</span>
+                    </a>
+                </li>
+                <h4>
+                    <span>Orders</span>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="orders.html">
+                        <span class="material-symbols-outlined">list_alt</span>
+                        <span>Orders</span>
+                    </a>
+                </li>
+                <h4>
+                    <span>Account</span>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="../profile/profile.html">
+                        <span class="material-symbols-outlined">account_circle</span>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="logoutLink">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="orders-container">
+            <header class="header-welcome">
+                <h1>Orders</h1>
+                <h1>Welcome, (Logged In account PHP username[STAFF, username])</h1>
+            </header>
+
+            <!-- SEARCH BAR -->
+            <form action="">
+                <div class="search-bar">
+                    <input type="search" placeholder="Search a product...">
+                    <select name="category" id="category">
+                        <option value="All">All Categories</option>
+                        <option value="phones">Phones</option>
+                        <option value="laptops">Laptops</option>
+                        <option value="tablets">Tablets</option>
+                        <option value="computers">Computers</option>
+                    </select>
+                    <select name="sort" id="sort">
+                        <option value="default">Sort By Default</option>
+                        <option value="totalLowHigh">Total: Low to High</option>
+                        <option value="totalHighLow">Total: High to Low</option>
+                        <option value="recentlyOrder">Recent Order</option>
+                        <option value="oldOrder">Old Order</option>
+                        <option value="pending">Status: Pending</option>
+                        <option value="completed">Status: Completed</option>
+                        <option value="cancelled">Status: Cancelled</option>
+                    </select>
+                    <input type="reset" value="Clear">
+                    <button type="submit">Search</button>
+                </div>
+            </form>
+
+            <!-- TABLES  -->
+            <div class="order-table-container">
+                <h1>Users order</h1>
+                <table id="orderTable" class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date Placed</th>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-status="pending">
+                            <td>#ORD-1001</td>
+                            <td>Maria S.</td>
+                            <td>Nov 4, 2025 - 8:00 PM</td>
+                            <td>Mouse</td>
+                            <td>8</td>
+                            <td>₱180</td>
+                            <td>₱1,250.00</td>
+                            <td><span class="status-tag pending">Pending</span></td>
+                            <div class="action-btn">
+                                <td><button class="action-btn confirm-btn">Confirm Order</button><button class="action-btn cancel-btn">Cancel Order</button></td>
+                            </div>
+                        </tr>
+
+                        <tr data-status="pending">
+                            <td>#ORD-1004</td>
+                            <td>Crisanto R.</td>
+                            <td>Nov 4, 2025 - 7:30 PM</td>
+                            <td>Mouse</td>
+                            <td>12</td>
+                            <td>₱180</td>
+                            <td>₱3,100.00</td>
+                            <td><span class="status-tag pending">Pending</span></td>
+                            <div class="action-btn">
+                                <td><button class="action-btn confirm-btn">Confirm Order</button><button class="action-btn cancel-btn">Cancel Order</button></td>
+                            </div>
+                        </tr>
+
+                        <tr data-status="completed">
+                            <td>#ORD-1002</td>
+                            <td>Juan D.</td>
+                            <td>Nov 3, 2025 - 10:00 AM</td>
+                            <td>Mouse</td>
+                            <td>9</td>
+                            <td>₱180</td>
+                            <td>₱450.00</td>
+                            <td><span class="status-tag completed">Completed</span></td>
+                            <td><button class="action-btn view-btn">View Details</button></td>
+                        </tr>
+
+                        <tr data-status="cancelled">
+                            <td>#ORD-1003</td>
+                            <td>Jose P.</td>
+                            <td>Nov 3, 2025 - 9:00 AM</td>
+                            <td>Mouse</td>
+                            <td>10</td>
+                            <td>₱180</td>
+                            <td>₱800.00</td>
+                            <td><span class="status-tag cancelled">Cancelled</span></td>
+                            <td><button class="action-btn view-btn">View Details</button></td>
+                        </tr>
+                        </tbody>
+                </table>
+            </div>
+        </main>
+    </main>
+
+<script src="orders.js"></script>
+<script src="../sidebarjs/main.js"></script>
+</body>

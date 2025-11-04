@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Interface - Device Market</title>
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="../css/responsiveness.css">
+</head>
+<body>
+    <main class="main-wrapper">
+        <!-- Mobile Toggle Button -->
+        <button class="mobile-toggle" id="sidebarToggle">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Device Market</h2>
+            </div>
+            <ul class="sidebar-links">
+                <h4>
+                    <span>Main</span>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="dashboard.html" class="active">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <h4>
+                    <span>Inventory</span>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="../products/products.html">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                        <span>Products</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                        <span>Archived Products</span>
+                    </a>
+                </li>
+                <h4>
+                    <span>Orders</span>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="#">
+                        <span class="material-symbols-outlined">list_alt</span>
+                        <span>All Orders</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="material-symbols-outlined">pending</span>
+                        <span>Pending Orders</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="material-symbols-outlined">check_circle</span>
+                        <span>Completed Orders</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="material-symbols-outlined">cancel</span>
+                        <span>Cancelled Orders</span>
+                    </a>
+                </li>
+                <h4>
+                    <span>Account</span>
+                    <div class="menu-separator"></div>
+                </h4>
+                <li>
+                    <a href="#">
+                        <span class="material-symbols-outlined">account_circle</span>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header-welcome">
+                <h1>Dashboard</h1>
+                <h1>Welcome, (Logged In account PHP username[STAFF, username])</h1>
+            </header>
+            <!-- Summary Cards -->
+            <div class="cards">
+                <div class="card blue">
+                    <div class="card-icon">
+                        <span class="material-symbols-outlined">pending</span>
+                    </div>
+                    <div class="card-info">
+                        <h2>Pending Orders</h2>
+                        <p>32</p>
+                    </div>
+                </div>
+                <div class="card yellow">
+                    <div class="card-icon">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                    </div>
+                    <div class="card-info">
+                        <h2>Total Products</h2>
+                        <p>145</p>
+                    </div>
+                </div>
+                <div class="card purple">
+                    <div class="card-icon">
+                        <span class="material-symbols-outlined">warning</span>
+                    </div>
+                    <div class="card-info">
+                        <h2>Low on Stocks</h2>
+                        <p>6</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <section class="orders-section">
+                <h2>Recent Orders</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>User Email</th>
+                                <th>Order ID & Product</th>
+                                <th>Total Price</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>James Dela Cruz</td>
+                                <td>jamesdc@example.com</td>
+                                <td>#ORD-1001 - Wireless Mouse</td>
+                                <td>₱850.00</td>
+                                <td><span class="status pending">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td>Ella Ramos</td>
+                                <td>ella.ramos@example.com</td>
+                                <td>#ORD-1002 - Laptop Stand</td>
+                                <td>₱1,200.00</td>
+                                <td><span class="status completed">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>Kyle Santos</td>
+                                <td>kyle.santos@example.com</td>
+                                <td>#ORD-1003 - Mechanical Keyboard</td>
+                                <td>₱2,499.00</td>
+                                <td><span class="status cancelled">Cancelled</span></td>
+                            </tr>
+                            <tr>
+                                <td>Marie Cruz</td>
+                                <td>marie.cruz@example.com</td>
+                                <td>#ORD-1004 - Gaming Chair</td>
+                                <td>₱7,899.00</td>
+                                <td><span class="status completed">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>Kenji Lopez</td>
+                                <td>kenji.lopez@example.com</td>
+                                <td>#ORD-1005 - USB Hub</td>
+                                <td>₱499.00</td>
+                                <td><span class="status pending">Pending</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="product-summary">
+                <!-- Left: Best Selling -->
+                <div class="best-selling">
+                    <h2>Best Selling Products</h2>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Category</th>
+                                    <th>Sold</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Wireless Mouse</td>
+                                    <td><span class="category electronics">Electronics</span></td>
+                                    <td>120</td>
+                                </tr>
+                                <tr>
+                                    <td>USB-C Cable</td>
+                                    <td><span class="category accessories">Accessories</span></td>
+                                    <td>95</td>
+                                </tr>
+                                <tr>
+                                    <td>Laptop Stand</td>
+                                    <td><span class="category accessories">Accessories</span></td>
+                                    <td>80</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Right: Low on Stock -->
+                <div class="low-on-stock-alert">
+                    <h2>Low on Stock Products</h2>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Category</th>
+                                    <th>Current Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Wireless Mouse</td>
+                                    <td><span class="category electronics">Electronics</span></td>
+                                    <td><span class="status cancelled">3</span></td>
+                                </tr>
+                                <tr>
+                                    <td>USB-C Cable</td>
+                                    <td><span class="category accessories">Accessories</span></td>
+                                    <td><span class="status cancelled">2</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Laptop Stand</td>
+                                    <td><span class="category accessories">Accessories</span></td>
+                                    <td><span class="status cancelled">4</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+
+        </main>
+    </main>
+
+    <script>
+        // Set active link
+        const links = document.querySelectorAll('.sidebar-links li a');
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                
+                links.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+
+        // Mobile sidebar toggle
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('sidebarToggle');
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+    </script>
+</body>
+</html>

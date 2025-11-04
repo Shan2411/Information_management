@@ -1,0 +1,49 @@
+/* Universal Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+    color: #2c3e50;
+}
+
+/* Main Wrapper */
+.main-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 78px;
+    padding: 30px;
+    transition: margin-left 0.3s ease;
+    flex: 1;
+    background: #f4f6f9;
+    min-height: 100vh;
+    overflow-y: auto;
+}
+
+.header-welcome {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.main-content h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+/* Mobile Toggle Button */
+.mobile-toggle {
+    display: none;
+}

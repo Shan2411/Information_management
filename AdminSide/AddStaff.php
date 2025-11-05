@@ -8,7 +8,7 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 $errors = [];
-$name = $email = "";
+$success = false;
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

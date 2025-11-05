@@ -3,7 +3,6 @@ session_start();
 include 'db_connect.php';
 
 header('Content-Type: application/json'); // always send JSON
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
@@ -13,6 +12,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // --- HARD-CODED LOGIN FIRST ---
+    $hardcodedUser = 'admin';
+    $hardcodedPass = '12345';
+
+    if ($username === $hardcodedUser && $password === $hardcodedPass) {
+        $_SESSION['user_id'] = 0; // special ID
+        $_SESSION['username'] = $hardcodedUser;
+
+        echo json_encode(['success' => true, 'redirect' => '../AdminSide/login.php']);
+        exit();
+    }
+
+    // --- Database login ---
     $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();

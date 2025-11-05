@@ -15,13 +15,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
     $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
 
     // Validation
     if (empty($name)) $errors[] = "Name is required.";
     if (empty($email)) $errors[] = "Email is required.";
     elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Invalid email format.";
     if (empty($password)) $errors[] = "Password is required.";
-    elseif (strlen($password) < 6) $errors[] = "Password must be at least 6 characters.";
+    elseif (strlen($password) < 6) $errors[] = "Password must be at least 8 characters.";
+    if ($password !== $confirm_password) $errors[] = "Passwords do not match.";
 
     // Check if email already exists
     if (empty($errors)) {
@@ -35,8 +37,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Insert into database
     if (empty($errors)) {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("INSERT INTO staff (name, email, password, created_at) VALUES (?, ?, ?, NOW())");
-        $stmt->bind_param("sss", $name, $email, $hashed_password);
+
+        // Set default position
+        $position = 'staff';
+
+        $stmt = $conn->prepare("INSERT INTO staff (name, email, password, position, created_at) VALUES (?, ?, ?, ?, NOW())");
+        $stmt->bind_param("ssss", $name, $email, $hashed_password, $position);
+
         if ($stmt->execute()) {
             $success = true;
             header("Location: AdminStaff.php?success=added");
@@ -122,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <div class="bg-white rounded-xl shadow-md p-6">
-                <form method="POST" class="space-y-4">
+                 <form method="POST" class="space-y-4">
                     <div>
                         <label class="block text-gray-700 font-semibold mb-1">Full Name</label>
                         <input type="text" name="name" value="<?= isset($name) ? htmlspecialchars($name) : '' ?>" 
@@ -135,8 +142,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div>
                         <label class="block text-gray-700 font-semibold mb-1">Password</label>
-                        <input type="password" name="password" placeholder="Minimum 6 characters" 
+                        <input type="password" name="password" id="password" placeholder="Minimum 8 characters"
                             class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-1">Confirm Password</label>
+                        <input type="password" name="confirm_password" id="confirm_password" placeholder="Re-enter password"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="show_password" class="h-4 w-4">
+                        <label for="show_password" class="text-gray-600 text-sm">Show Password</label>
                     </div>
                     <div class="flex gap-3 mt-4">
                         <button type="submit" class="bg-[rgb(116,142,159)] hover:bg-[rgb(100,123,136)] text-white px-6 py-2.5 rounded-lg transition inline-flex items-center">
@@ -151,5 +167,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </main>
 </div>
+
+
+
+<script>
+document.getElementById('show_password').addEventListener('change', function() {
+    const passFields = [document.getElementById('password'), document.getElementById('confirm_password')];
+    passFields.forEach(f => f.type = this.checked ? 'text' : 'password');
+});
+</script>
 </body>
 </html>

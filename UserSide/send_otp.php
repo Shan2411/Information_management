@@ -54,7 +54,29 @@ try {
 
     $mail->isHTML(true);
     $mail->Subject = 'Your OTP Code';
-    $mail->Body = "Your 6-digit OTP is: <b>$otp</b>";
+    $mail->isHTML(true);
+    $mail->Subject = 'Your Email Verification Code';
+
+    $mail->Body = "
+        <div style='font-family: Arial, sans-serif; padding: 20px; line-height: 1.6;'>
+        <h2 style='color:#4A90E2;'>Email Verification Required</h2>
+        <p>Hi <b>$username</b>,</p>
+
+        <p>Thank you for registering at <b>Electronic Device Market</b>! 
+        To complete your account setup and keep your information secure, please verify your email address using the code below:</p>
+
+        <div style='font-size: 24px; font-weight: bold; margin: 20px 0; padding: 10px 20px; border: 2px dashed #4A90E2; display: inline-block;'>
+            $otp
+        </div>
+
+        <p>This code will expire in <b>5 minutes</b>. Do not share it with anyone.</p>
+
+        <p>If you did not create this account, you can safely ignore this email.</p>
+
+        <br>
+        <p>Best regards,<br><b>Electronic Device Market Team</b></p>
+    </div>
+    ";
 
     $mail->send();
     echo json_encode(['success' => true, 'message' => 'otp_sent']);

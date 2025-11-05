@@ -236,6 +236,24 @@ function toggleFormFields() {
         submitBtn.classList.remove('bg-green-600', 'text-white');
         submitBtn.classList.add('bg-gray-400', 'text-gray-200');
     }
+
+    // --- Add Yes/No popup for saving user info ---
+    form.addEventListener('submit', function(e) {
+    if (!document.getElementById('saveUserInfo')) {
+        e.preventDefault(); // prevent form submission
+
+        const saveInfo = confirm("Do you want to save this information in your profile?");
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'save_user_info';
+        input.value = saveInfo ? '1' : '0';
+        input.id = 'saveUserInfo';
+        form.appendChild(input);
+
+        form.submit(); // submit form after adding hidden input
+    }
+});
+
 }
 
 toggleFormFields();

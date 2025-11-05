@@ -79,6 +79,29 @@ for ($i = 0; $i < count($cart_ids); $i++) {
     $update_stock->execute();
 
 }
+
+// --- Save user info if requested ---
+if (isset($_POST['save_user_info']) && $_POST['save_user_info'] == '1') {
+    $update_user = $conn->prepare("
+        UPDATE users SET 
+            first_name = ?, last_name = ?, contact_num = ?, address = ?, city = ?, province = ?, postal_code = ?
+        WHERE user_id = ?
+    ");
+    $update_user->bind_param(
+        "sssssssi",
+        $_POST['first_name'],
+        $_POST['last_name'],
+        $_POST['contact_num'],
+        $_POST['address'],
+        $_POST['city'],
+        $_POST['province'],
+        $_POST['postal_code'],
+        $user_id
+    );
+    $update_user->execute();
+}
+
+
 ?>
 
 <!DOCTYPE html>

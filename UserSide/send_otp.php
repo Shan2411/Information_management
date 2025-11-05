@@ -37,6 +37,9 @@ $_SESSION['pending_user'] = [
     'contact_num' => $contact_num
 ];
 $_SESSION['otp'] = $otp;
+$_SESSION['otp_expires'] = time() + (60 * 5); // OTP valid 5 minutes
+$_SESSION['otp_attempts'] = 0;
+
 
 $mail = new PHPMailer(true);
 

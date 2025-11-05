@@ -92,7 +92,6 @@ $lowStockProducts = $conn->query("SELECT * FROM products WHERE stock < 10 ORDER 
         <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-4 flex justify-between items-center">
             <div>
                 <h1 class="text-3xl font-bold text-[rgb(116,142,159)]">Dashboard Overview</h1>
-                <p class="text-gray-500 text-sm mt-1">Welcome back, <?= htmlspecialchars($_SESSION['admin']) ?></p>
             </div>
             <div class="text-right">
                 <p class="text-sm text-gray-500"><?= date('l, F j, Y') ?></p>

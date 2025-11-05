@@ -18,30 +18,36 @@ $user = $result->fetch_assoc();
 
 // --- Handle form submission ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $first_name = trim($_POST['first_name']);
-    $last_name = trim($_POST['last_name']);
-    $middle_initial = trim($_POST['middle_initial']);
-    $birthdate = $_POST['birthdate'];
-    $email = trim($_POST['email']);
-    $contact_num = trim($_POST['contact_num']);
-    $profile_image_path = $user['profile_image_path']; // keep old image by default
+  $first_name = trim($_POST['first_name']);
+  $last_name = trim($_POST['last_name']);
+  $middle_initial = trim($_POST['middle_initial']);
+  $birthdate = $_POST['birthdate'];
+  $email = trim($_POST['email']);
+  $contact_num = trim($_POST['contact_num']);
+  $profile_image_path = $user['profile_image_path']; // keep old one by default 
 
-    // --- Handle file upload if a new image is provided ---
-    if (!empty($_FILES['profile_image']['name'])) {
-        $target_dir = "uploads/";
-        if (!is_dir($target_dir)) { mkdir($target_dir, 0777, true); }
-        $file_name = basename($_FILES['profile_image']['name']);
-        $target_file = $target_dir . time() . "_" . $file_name;
-        $allowed_types = ['jpg','jpeg','png','gif'];
-        $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-        if (in_array($file_type, $allowed_types)) {
-            if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $target_file)) {
-                $profile_image_path = $target_file;
-            }
-        }
+  // --- Handle file upload if a new image is provided ---
+  if (!empty($_FILES['profile_image']['name'])) {
+    $target_dir = "uploads/";
+    if (!is_dir($target_dir)) {
+      mkdir($target_dir, 0777, true);
     }
 
-    // --- Server-side validation for contact number ---
+    $file_name = basename($_FILES['profile_image']['name']);
+    $target_file = $target_dir . time() . "_" . $file_name;
+
+    // Only allow image types
+    $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
+    $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+    if (in_array($file_type, $allowed_types)) {
+      if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $target_file)) {
+        $profile_image_path = $target_file;
+      }
+    }
+  }
+
+// --- Server-side validation for contact number ---
     if (empty($contact_num) || !preg_match('/^(09\d{9}|\+639\d{9})$/', $contact_num)) {
         echo "<p style='color:red;'>Please enter a valid Philippine mobile number.</p>";
     } else {
@@ -56,7 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -95,8 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div>
-            <label class="block text-gray-700 font-semibold">Birthdate</label>
-            <input type="date" 
+        <label class="block text-gray-700 font-semibold">Birthdate</label>
+        <input type="date" 
                     name="birthdate" 
                     id="birthdate"
                     value="<?= htmlspecialchars($user['birthdate'] ?? '') ?>" 
@@ -104,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     required>
             <p id="birthdateError" class="text-red-600 text-sm mt-1 hidden">You must be between 18 and 90 years old.</p>
         </div>
-
+        </div>
 
         <div>
         <label class="block text-gray-700 font-semibold">Email</label>
@@ -114,11 +119,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div>
-            <label class="block text-gray-700 font-semibold">Contact Number</label>
-            <input type="text" name="contact_num" value="<?= htmlspecialchars($user['contact_num'] ?? '') ?>" class="w-full border rounded-lg p-2" required>
-            <p id="contactError" class="text-red-600 text-sm mt-1 hidden">Please enter a valid Philippine mobile number (09XXXXXXXXX or +639XXXXXXXXX).</p>
+        <label class="block text-gray-700 font-semibold">Contact Number</label>
+        <input type="text" name="contact_num"
+                value="<?= htmlspecialchars($user['contact_num'] ?? '') ?>"
+                class="w-full border rounded-lg p-2">
         </div>
-
 
 
     <!-- Buttons -->
@@ -137,15 +142,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.querySelector('form');
-    const birthdateInput = form.querySelector('input[name="birthdate"]');
+  const form = document.querySelector('form');  
+   const birthdateInput = form.querySelector('input[name="birthdate"]');
     const contactInput = form.querySelector('input[name="contact_num"]');
     const contactError = document.getElementById('contactError');
 
-    form.addEventListener('submit', (e) => {
-        let allFilled = true;
-
-        // --- Required fields validation ---
+  form.addEventListener('submit', (e) => {
+    const requiredFields = form.querySelectorAll('input[required], textarea[required]');
+    let allFilled = true;
+      // --- Required fields validation ---
         const requiredFields = form.querySelectorAll('input[required], textarea[required]');
         requiredFields.forEach(field => {
             if (!field.value.trim()) {
@@ -193,7 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
-
 
 
 </body>

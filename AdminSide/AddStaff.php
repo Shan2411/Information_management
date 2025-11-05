@@ -8,43 +8,19 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 $errors = [];
-$success = false;
+$name = $email = "";
 
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name']);
-    $email = trim($_POST['email']);
-    $password = $_POST['password'];
+// Keep input values after error redirect using session
+if (isset($_SESSION['form_data'])) {
+    $name = $_SESSION['form_data']['name'] ?? "";
+    $email = $_SESSION['form_data']['email'] ?? "";
+    unset($_SESSION['form_data']);
+}
 
-    // Validation
-    if (empty($name)) $errors[] = "Name is required.";
-    if (empty($email)) $errors[] = "Email is required.";
-    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Invalid email format.";
-    if (empty($password)) $errors[] = "Password is required.";
-    elseif (strlen($password) < 6) $errors[] = "Password must be at least 6 characters.";
-
-    // Check if email already exists
-    if (empty($errors)) {
-        $email_safe = $conn->real_escape_string($email);
-        $check = $conn->query("SELECT * FROM staff WHERE email='$email_safe'");
-        if ($check->num_rows > 0) {
-            $errors[] = "Email already exists.";
-        }
-    }
-
-    // Insert into database
-    if (empty($errors)) {
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("INSERT INTO staff (name, email, password, created_at) VALUES (?, ?, ?, NOW())");
-        $stmt->bind_param("sss", $name, $email, $hashed_password);
-        if ($stmt->execute()) {
-            $success = true;
-            header("Location: AdminStaff.php?success=added");
-            exit;
-        } else {
-            $errors[] = "Database error: " . $stmt->error;
-        }
-    }
+// Check if errors were sent back
+if (isset($_SESSION['errors'])) {
+    $errors = $_SESSION['errors'];
+    unset($_SESSION['errors']);
 }
 ?>
 
@@ -122,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <div class="bg-white rounded-xl shadow-md p-6">
-                <form method="POST" class="space-y-4">
+                <form method="POST" action="send_staff_otp.php" class="space-y-4">
                     <div>
                         <label class="block text-gray-700 font-semibold mb-1">Full Name</label>
                         <input type="text" name="name" value="<?= isset($name) ? htmlspecialchars($name) : '' ?>" 
@@ -153,3 +129,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 </body>
 </html>
+

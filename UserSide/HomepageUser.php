@@ -55,11 +55,6 @@ include 'db_connect.php';
   </a>
 </section>
 
-
-
-
-
-
 <!-- FEATURED PRODUCTS -->
 <section id="products" class="max-w-6xl mx-auto py-16 px-6 relative" style="background: linear-gradient(135deg, rgba(237, 243, 247, 0.25), rgba(252, 253, 253, 0.3));">
   <h3 class="text-3xl font-bold text-center mb-10">Our Top Selling Products</h3>

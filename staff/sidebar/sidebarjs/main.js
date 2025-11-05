@@ -1,41 +1,45 @@
-// ===== UNIVERSAL SIDEBAR ACTIVE LINK HIGHLIGHTER =====
 document.addEventListener('DOMContentLoaded', function () {
-    const links = document.querySelectorAll('.sidebar-links li a');
-    const currentPath = window.location.pathname;
+  const links = document.querySelectorAll('.sidebar-links li a');
+  const currentPath = window.location.pathname;
 
-    links.forEach(link => {
-        const linkHref = link.getAttribute('href');
+  links.forEach(link => {
+    // Skip links marked to not receive highlight (e.g., logout)
+    if (link.dataset.noHighlight !== undefined) {
+      // still attach click-handler for anchor behavior if needed, but skip highlight logic
+      link.addEventListener('click', function () {
+        // do nothing related to active class
+      });
+      return;
+    }
 
-        // Handle 3 cases:
-        // 1. Absolute or relative paths that match the current URL
-        // 2. Subdirectories (using .includes)
-        // 3. '#' links (highlighted when clicked)
+    const linkHref = link.getAttribute('href');
 
-        if (
-            linkHref !== '#' &&
-            (currentPath.endsWith(linkHref) ||
-             currentPath.includes(linkHref))
-        ) {
-            link.classList.add('active');
-        }
+    if (
+      linkHref !== '#' &&
+      (currentPath.endsWith(linkHref) ||
+       currentPath.includes(linkHref))
+    ) {
+      link.classList.add('active');
+    }
 
-        // Add click listener for '#' or other local links
-        link.addEventListener('click', function () {
-            // remove active from all
-            links.forEach(l => l.classList.remove('active'));
-            // add to clicked one
-            this.classList.add('active');
-        });
+    link.addEventListener('click', function () {
+      // remove active from all (only those not marked noHighlight)
+      links.forEach(l => {
+        if (l.dataset.noHighlight === undefined) l.classList.remove('active');
+      });
+
+      this.classList.add('active');
     });
+  });
 });
 
 
-// Logout confirmation
 document.getElementById('logoutLink').addEventListener('click', (e) => {
   e.preventDefault();
   if (confirm("Are you sure you want to log out?")) {
-    // Redirect to login or logout PHP
-    window.location.href = "logout.php"; // change path if needed
+    // proceed to logout
+    window.location.href = e.currentTarget.getAttribute('href') || 'logout.php';
+  } else {
+    // user cancelled — nothing to restore since link is ignored by highlighter
   }
 });
-

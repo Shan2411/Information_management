@@ -74,7 +74,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" id="logoutLink">
+                    <a href="#" id="logoutLink" data-no-highlight>
                         <span class="material-symbols-outlined">logout</span>
                         <span>Logout</span>
                     </a>
@@ -115,77 +115,114 @@
             </form>
 
             <!-- TABLES  -->
+            <!-- corrected table markup: buttons inside <td>, no <div> wrapper; add data-* attrs on <tr> server-side -->
             <div class="order-table-container">
-                <h1>Users order</h1>
+            <h1>Users order</h1>
                 <table id="orderTable" class="orders-table">
                     <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Customer</th>
-                            <th>Date Placed</th>
-                            <th>Product</th>
-                            <th>Qty</th>
-                            <th>Unit Price</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Date Placed</th>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr data-status="pending">
-                            <td>#ORD-1001</td>
-                            <td>Maria S.</td>
-                            <td>Nov 4, 2025 - 8:00 PM</td>
-                            <td>Mouse</td>
-                            <td>8</td>
-                            <td>₱180</td>
-                            <td>₱1,250.00</td>
-                            <td><span class="status-tag pending">Pending</span></td>
-                            <div class="action-btn">
-                                <td><button class="action-btn confirm-btn">Confirm Order</button><button class="action-btn cancel-btn">Cancel Order</button></td>
-                            </div>
-                        </tr>
+                    <!-- Example: pending row with Confirm + Cancel -->
+                    <tr data-order-id="#ORD-1001" data-product="Mouse" data-customer="Maria S." data-date="Nov 4, 2025 - 8:00 PM" data-qty="8" data-price="₱180" data-total="₱1,250.00" data-status="pending" data-description="Description from textarea here.">
+                        <td>#ORD-1001</td>
+                        <td>Maria S.</td>
+                        <td>Nov 4, 2025 - 8:00 PM</td>
+                        <td>Mouse</td>
+                        <td>8</td>
+                        <td>₱180</td>
+                        <td>₱1,250.00</td>
+                        <td><span class="status-tag pending">Pending</span></td>
+                        <td>
+                        <button class="action-btn confirm-btn">Confirm Order</button>
+                        <button class="action-btn cancel-btn">Cancel Order</button>
+                        </td>
+                    </tr>
 
-                        <tr data-status="pending">
-                            <td>#ORD-1004</td>
-                            <td>Crisanto R.</td>
-                            <td>Nov 4, 2025 - 7:30 PM</td>
-                            <td>Mouse</td>
-                            <td>12</td>
-                            <td>₱180</td>
-                            <td>₱3,100.00</td>
-                            <td><span class="status-tag pending">Pending</span></td>
-                            <div class="action-btn">
-                                <td><button class="action-btn confirm-btn">Confirm Order</button><button class="action-btn cancel-btn">Cancel Order</button></td>
-                            </div>
-                        </tr>
+                    <!-- Completed row with view only -->
+                    <tr data-order-id="#ORD-1002" data-product="Mouse" data-customer="Juan D." data-date="Nov 3, 2025 - 10:00 AM" data-qty="9" data-price="₱180" data-total="₱450.00" data-status="completed" data-description="Completed order description.">
+                        <td>#ORD-1002</td>
+                        <td>Juan D.</td>
+                        <td>Nov 3, 2025 - 10:00 AM</td>
+                        <td>Mouse</td>
+                        <td>9</td>
+                        <td>₱180</td>
+                        <td>₱450.00</td>
+                        <td><span class="status-tag completed">Completed</span></td>
+                        <td><button class="action-btn view-btn">View Details</button></td>
+                    </tr>
 
-                        <tr data-status="completed">
-                            <td>#ORD-1002</td>
-                            <td>Juan D.</td>
-                            <td>Nov 3, 2025 - 10:00 AM</td>
-                            <td>Mouse</td>
-                            <td>9</td>
-                            <td>₱180</td>
-                            <td>₱450.00</td>
-                            <td><span class="status-tag completed">Completed</span></td>
-                            <td><button class="action-btn view-btn">View Details</button></td>
-                        </tr>
-
-                        <tr data-status="cancelled">
-                            <td>#ORD-1003</td>
-                            <td>Jose P.</td>
-                            <td>Nov 3, 2025 - 9:00 AM</td>
-                            <td>Mouse</td>
-                            <td>10</td>
-                            <td>₱180</td>
-                            <td>₱800.00</td>
-                            <td><span class="status-tag cancelled">Cancelled</span></td>
-                            <td><button class="action-btn view-btn">View Details</button></td>
-                        </tr>
-                        </tbody>
+                    <!-- Another pending row -->
+                    <tr data-order-id="#ORD-1003" data-product="Mouse" data-customer="Jose P." data-date="Nov 3, 2025 - 9:00 AM" data-qty="10" data-price="₱180" data-total="₱800.00" data-status="pending" data-description="Ito ang description mula sa textarea.">
+                        <td>#ORD-1003</td>
+                        <td>Jose P.</td>
+                        <td>Nov 3, 2025 - 9:00 AM</td>
+                        <td>Mouse</td>
+                        <td>10</td>
+                        <td>₱180</td>
+                        <td>₱800.00</td>
+                        <td><span class="status-tag pending">Pending</span></td>
+                        <td>
+                        <button class="action-btn confirm-btn">Confirm Order</button>
+                        <button class="action-btn cancel-btn">Cancel Order</button>
+                        </td>
+                    </tr>
+                    </tbody>
                 </table>
             </div>
+
+
+
+
+        <!-- Place this at the end of <body>, outside other positioned containers -->
+        <div id="details-overlay" class="overlay" aria-hidden="true" role="dialog" aria-modal="true">
+            <div class="overlay-content" role="document">
+                <!-- NOTE: Close button removed by request -->
+                <div class="overlay-head">
+                <h3 id="overlay-product">Product name</h3>
+                <p class="price" id="overlay-price">₱0.00</p>
+                </div>
+
+                <div class="overlay-body">
+                <div class="overlay-media">
+                    <!-- for thumbnail -->
+                    <img id="overlay-image" src="https://via.placeholder.com/300x200/2c3e50/ffffff?text=Product" alt="Product image">
+                    <!-- sub img -->
+                    <img id="overlay-image" src="https://via.placeholder.com/300x200/2c3e50/ffffff?text=Product" alt="Product image">
+                    <img id="overlay-image" src="https://via.placeholder.com/300x200/2c3e50/ffffff?text=Product" alt="Product image">
+                    <img id="overlay-image" src="https://via.placeholder.com/300x200/2c3e50/ffffff?text=Product" alt="Product image">
+                </div>
+
+                <div class="overlay-info">
+                    <div class="details">
+                    <p>Order ID: <span id="overlay-order-id">#ORD-xxxx</span></p>
+                    <p>Customer: <span id="overlay-customer">Name</span></p>
+                    <p>Date Ordered: <span id="overlay-date">Date/time</span></p>
+                    <p>Product: <span id="overlay-product-name">Product</span></p>
+                    <p>Quantity: <span id="overlay-qty">0</span></p>
+                    <p>Total: <span id="overlay-total">₱0.00</span></p>
+                    <p>Status: <span id="overlay-status">Status</span></p>
+                    <!-- Plain description area (read-only, styled) -->
+                    <div class="description">
+                        <h4>Description</h4>
+                        <div id="overlay-long-desc" class="long-desc" aria-live="polite">—</div>
+                    </div>
+
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
         </main>
     </main>
 

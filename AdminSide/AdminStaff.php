@@ -142,7 +142,8 @@ $result = $stmt->get_result();
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-gray-600"><i class="fas fa-envelope text-gray-400 mr-2"></i><?= htmlspecialchars($row['email']) ?></td>
-                                        <td class="px-6 py-4 text-sm text-gray-600"><i class="fas fa-user-tag text-gray-400 mr-2"></i><?= htmlspecialchars($row['role']) ?></td>
+                                        <td class="px-6 py-4 text-sm text-gray-600"><i class="fas fa-user-tag text-gray-400 mr-2"><?= htmlspecialchars($row['role'] ?? 'N/A') ?>
+
                                         <td class="px-6 py-4 text-sm text-gray-600"><i class="fas fa-calendar text-gray-400 mr-2"></i><?= isset($row['created_at']) ? date('M d, Y', strtotime($row['created_at'])) : 'N/A' ?></td>
                                         <td class="px-6 py-4 text-center">
                                             <a href="EditStaff.php?id=<?= $row['staff_id'] ?>" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg inline-flex items-center mr-2">

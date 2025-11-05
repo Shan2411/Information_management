@@ -32,14 +32,32 @@ include 'db_connect.php';
 
     <?php include 'header.php'; ?>
 
+    
+<!-- HERO -->
+<section class="relative text-white py-32 text-center overflow-hidden min-h-[69vh]" id="home">
+  <!-- Background Video -->
+  <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover -z-10">
+    <source src="video1.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Overlay for readability -->
+  <div class="absolute inset-0 bg-[rgba(0, 0, 0, 0.43)] -z-5"></div>
+
+  <!-- Hero Content -->
+  <h2 class="text-5xl font-bold mb-6 animate-fadeInUp text-white drop-shadow-lg">Shop the Latest Electronics</h2>
+  <p class="text-xl mb-8 animate-fadeInUp delay-150 text-white drop-shadow-md">
+    Smart devices, powerful laptops, and next-gen gadgets.
+  </p>
+  <a href="mainproducts.php" 
+     class="bg-[rgb(255,255,255)] text-[rgb(34,34,34)] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition transform hover:scale-105 animate-fadeInUp delay-300 inline-block drop-shadow-md">
+     Shop Now
+  </a>
+</section>
 
 
-  <!-- HERO -->
-  <section class="bg-[rgb(116,142,159)] text-white py-20 text-center" id = "home">
-    <h2 class="text-4xl font-bold mb-4">Shop the Latest Electronics</h2>
-    <p class="text-lg mb-6">Smart devices, powerful laptops, and next-gen gadgets.</p>
-    <a href="mainproducts.php" class="bg-white text-[rgb(116,142,159)] px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">Shop Now</a>
-  </section>
+
+
 
 
 <!-- FEATURED PRODUCTS -->

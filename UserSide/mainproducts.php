@@ -41,8 +41,22 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <title>All Products | Electronic Device Market</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
+
+    <style>
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fadeInUp {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+    </style>
+
   </head>
 
+  
 
 <body class="min-h-screen text-gray-800" 
   style="background: linear-gradient(135deg, rgba(171, 186, 197, 0.25), rgba(253, 254, 255, 0.3));">

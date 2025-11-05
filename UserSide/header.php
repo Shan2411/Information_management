@@ -84,6 +84,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
         <input type="text" name="username" placeholder="Username" required class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
         
         <input type="email" name="email" placeholder="Email" required class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
+        <p id="otpStatus" class="text-sm text-[rgb(116,142,159)] mt-2 hidden">Sending OTP, please wait...</p>
         
 
         <input type="text" name="contact_num" placeholder="Contact Number" required
@@ -221,44 +222,55 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // --- AJAX Register with Philippine contact number validation ---
-  registerFormElement?.addEventListener('submit', async (e) => {
+  
+// --- AJAX Register with Philippine contact number validation ---
+registerFormElement?.addEventListener('submit', async (e) => {
     e.preventDefault();
     registerError.classList.add('hidden');
 
-    // ✅ Contact number validation
+    const otpStatus = document.getElementById('otpStatus');
+    otpStatus.classList.remove('hidden');
+    otpStatus.textContent = "Sending OTP, please wait...";
+
+    // Contact number validation
     const contactInput = registerFormElement.querySelector('input[name="contact_num"]');
     const contactError = registerFormElement.querySelector('#contactError');
     const contactVal = contactInput?.value.trim();
     const phPattern = /^(09\d{9}|\+639\d{9})$/;
 
     if (!contactVal || !phPattern.test(contactVal)) {
-      contactInput.classList.add('border-red-500');
-      contactError?.classList.remove('hidden');
-      return; // prevent submission
+        contactInput.classList.add('border-red-500');
+        contactError?.classList.remove('hidden');
+        otpStatus.classList.add('hidden');
+        return; // prevent submission
     } else {
-      contactInput.classList.remove('border-red-500');
-      contactError?.classList.add('hidden');
+        contactInput.classList.remove('border-red-500');
+        contactError?.classList.add('hidden');
     }
 
     const formData = new FormData(registerFormElement);
 
     try {
-      const response = await fetch('send_otp.php', { method: 'POST', body: formData });
-      const result = await response.json();
-      if (result.success) {
-        window.location = "otp_verify.php";
-        registerForm.classList.add('hidden');
-        loginForm.classList.remove('hidden');
-      } else {
-        registerError.textContent = result.message;
-        registerError.classList.remove('hidden');
-      }
+        const response = await fetch('send_otp.php', { method: 'POST', body: formData });
+        const result = await response.json();
+
+        if (result.success) {
+            otpStatus.textContent = "OTP sent! Redirecting...";
+            setTimeout(() => window.location = "otp_verify.php", 1000);
+            registerForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+        } else {
+            otpStatus.classList.add('hidden');
+            registerError.textContent = result.message;
+            registerError.classList.remove('hidden');
+        }
     } catch {
-      registerError.textContent = "An unexpected error occurred. Please try again.";
-      registerError.classList.remove('hidden');
+        otpStatus.classList.add('hidden');
+        registerError.textContent = "An unexpected error occurred. Please try again.";
+        registerError.classList.remove('hidden');
     }
-  });
+});
+
 
   // --- Mobile Menu ---
   if (menuBtn && mobileNav) {

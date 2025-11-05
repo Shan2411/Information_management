@@ -244,10 +244,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const formData = new FormData(registerFormElement);
 
     try {
-      const response = await fetch('register_handler.php', { method: 'POST', body: formData });
+      const response = await fetch('send_otp.php', { method: 'POST', body: formData });
       const result = await response.json();
       if (result.success) {
-        alert("Registration successful! You can now log in.");
+        window.location = "otp_verify.php";
         registerForm.classList.add('hidden');
         loginForm.classList.remove('hidden');
       } else {

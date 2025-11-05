@@ -179,6 +179,23 @@ const submitBtn = document.getElementById('submitBtn');
 const confirmBox = document.getElementById('confirmDetails');
 const shippingWarning = document.getElementById('shippingWarning');
 
+form.addEventListener('submit', function(e) {
+    if (!document.getElementById('saveUserInfo')) {
+        e.preventDefault(); // prevent form submission
+
+        // Show Yes/No confirmation
+        const saveInfo = confirm("Do you want to save this information in your profile?");
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'save_user_info';
+        input.value = saveInfo ? '1' : '0';
+        input.id = 'saveUserInfo';
+        form.appendChild(input);
+
+        form.submit(); // submit the form after adding hidden input
+    }
+});
+
 function toggleFormFields() {
   const fields = form.querySelectorAll('input[type="text"], textarea');
 

@@ -3,12 +3,11 @@ session_start();
 
 // --- DATABASE CONNECTION ---
 $servername = "localhost";
-$username = "root";       // change as per your DB
-$password = "";           // change as per your DB
-$dbname = "information_management"; // change as per your DB
+$username = "root";
+$password = "";
+$dbname = "information_management";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
-
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -22,6 +21,7 @@ if (!isset($_SESSION['admin_id'])) {
 // --- FETCH STATISTICS ---
 $productCount = $conn->query("SELECT COUNT(product_id) AS total_products FROM products")->fetch_assoc()['total_products'];
 $userCount = $conn->query("SELECT COUNT(user_id) AS total_users FROM users")->fetch_assoc()['total_users'];
+$staffCount = $conn->query("SELECT COUNT(staff_id) AS total_staff FROM staff")->fetch_assoc()['total_staff'];
 $orderCount = $conn->query("SELECT COUNT(order_id) AS total_orders FROM orders")->fetch_assoc()['total_orders'];
 $totalTransactions = $conn->query("SELECT COUNT(transaction_id) AS total_transactions FROM transactions")->fetch_assoc()['total_transactions'] ?? 0;
 $totalSales = $conn->query("SELECT SUM(total_amount) AS total_sales FROM orders WHERE status = 'completed'")->fetch_assoc()['total_sales'] ?? 0;
@@ -43,15 +43,15 @@ $lowStockProducts = $conn->query("SELECT * FROM products WHERE stock < 10 ORDER 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Device Market</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .sidebar-link:hover { background-color: rgba(255, 255, 255, 0.1); }
-        .sidebar-link.active { background-color: rgba(255, 255, 255, 0.2); border-left: 4px solid white; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | Device Market</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    .sidebar-link:hover { background-color: rgba(255, 255, 255, 0.1); }
+    .sidebar-link.active { background-color: rgba(255, 255, 255, 0.2); border-left: 4px solid white; }
+</style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 <div class="flex h-screen">
@@ -62,24 +62,22 @@ $lowStockProducts = $conn->query("SELECT * FROM products WHERE stock < 10 ORDER 
         </div>
         <nav class="flex-1 p-4 space-y-2">
             <a href="AdminDashboard.php" class="sidebar-link active flex items-center py-3 px-4 rounded-lg transition">
-                <i class="fas fa-chart-line w-6"></i>
-                <span class="ml-3">Dashboard</span>
+                <i class="fas fa-chart-line w-6"></i><span class="ml-3">Dashboard</span>
             </a>
             <a href="AdminProducts.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
-                <i class="fas fa-box w-6"></i>
-                <span class="ml-3">Manage Products</span>
+                <i class="fas fa-box w-6"></i><span class="ml-3">Manage Products</span>
             </a>
             <a href="AdminUsers.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
-                <i class="fas fa-users w-6"></i>
-                <span class="ml-3">Manage Users</span>
+                <i class="fas fa-users w-6"></i><span class="ml-3">Manage Users</span>
+            </a>
+            <a href="AdminStaff.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
+                <i class="fas fa-user-tie w-6"></i><span class="ml-3">Manage Staff</span>
             </a>
             <a href="AdminOrders.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
-                <i class="fas fa-shopping-cart w-6"></i>
-                <span class="ml-3">Orders</span>
+                <i class="fas fa-shopping-cart w-6"></i><span class="ml-3">Orders</span>
             </a>
             <a href="AdminReports.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
-                <i class="fas fa-chart-bar w-6"></i>
-                <span class="ml-3">Sales Report</span>
+                <i class="fas fa-chart-bar w-6"></i><span class="ml-3">Sales Report</span>
             </a>
         </nav>
         <div class="p-4 border-t border-white/20">
@@ -91,7 +89,6 @@ $lowStockProducts = $conn->query("SELECT * FROM products WHERE stock < 10 ORDER 
 
     <!-- MAIN CONTENT -->
     <main class="flex-1 overflow-y-auto">
-        <!-- Header -->
         <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-4 flex justify-between items-center">
             <div>
                 <h1 class="text-3xl font-bold text-[rgb(116,142,159)]">Dashboard Overview</h1>
@@ -104,7 +101,7 @@ $lowStockProducts = $conn->query("SELECT * FROM products WHERE stock < 10 ORDER 
 
         <div class="p-8">
             <!-- STATISTICS CARDS -->
-            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
                 <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-6 shadow-lg">
                     <div class="flex justify-between items-start">
                         <div>
@@ -112,9 +109,7 @@ $lowStockProducts = $conn->query("SELECT * FROM products WHERE stock < 10 ORDER 
                             <h3 class="text-4xl font-bold mt-2"><?= $productCount ?></h3>
                             <p class="text-blue-100 text-xs mt-2">Active in inventory</p>
                         </div>
-                        <div class="bg-white/20 p-3 rounded-lg">
-                            <i class="fas fa-box text-2xl"></i>
-                        </div>
+                        <div class="bg-white/20 p-3 rounded-lg"><i class="fas fa-box text-2xl"></i></div>
                     </div>
                 </div>
 
@@ -125,9 +120,18 @@ $lowStockProducts = $conn->query("SELECT * FROM products WHERE stock < 10 ORDER 
                             <h3 class="text-4xl font-bold mt-2"><?= $userCount ?></h3>
                             <p class="text-green-100 text-xs mt-2">Total customers</p>
                         </div>
-                        <div class="bg-white/20 p-3 rounded-lg">
-                            <i class="fas fa-users text-2xl"></i>
+                        <div class="bg-white/20 p-3 rounded-lg"><i class="fas fa-users text-2xl"></i></div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-xl p-6 shadow-lg">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-teal-100 text-sm font-medium">Staff Members</p>
+                            <h3 class="text-4xl font-bold mt-2"><?= $staffCount ?></h3>
+                            <p class="text-teal-100 text-xs mt-2">Active staff accounts</p>
                         </div>
+                        <div class="bg-white/20 p-3 rounded-lg"><i class="fas fa-user-tie text-2xl"></i></div>
                     </div>
                 </div>
 
@@ -138,9 +142,7 @@ $lowStockProducts = $conn->query("SELECT * FROM products WHERE stock < 10 ORDER 
                             <h3 class="text-4xl font-bold mt-2"><?= $orderCount ?></h3>
                             <p class="text-purple-100 text-xs mt-2">All time orders</p>
                         </div>
-                        <div class="bg-white/20 p-3 rounded-lg">
-                            <i class="fas fa-shopping-cart text-2xl"></i>
-                        </div>
+                        <div class="bg-white/20 p-3 rounded-lg"><i class="fas fa-shopping-cart text-2xl"></i></div>
                     </div>
                 </div>
 
@@ -151,9 +153,7 @@ $lowStockProducts = $conn->query("SELECT * FROM products WHERE stock < 10 ORDER 
                             <h3 class="text-4xl font-bold mt-2"><?= $totalTransactions ?></h3>
                             <p class="text-indigo-100 text-xs mt-2">All transaction records</p>
                         </div>
-                        <div class="bg-white/20 p-3 rounded-lg">
-                            <i class="fas fa-exchange-alt text-2xl"></i>
-                        </div>
+                        <div class="bg-white/20 p-3 rounded-lg"><i class="fas fa-exchange-alt text-2xl"></i></div>
                     </div>
                 </div>
 
@@ -164,9 +164,7 @@ $lowStockProducts = $conn->query("SELECT * FROM products WHERE stock < 10 ORDER 
                             <h3 class="text-4xl font-bold mt-2">₱<?= number_format($totalSales, 0) ?></h3>
                             <p class="text-orange-100 text-xs mt-2">Completed sales</p>
                         </div>
-                        <div class="bg-white/20 p-3 rounded-lg">
-                            <i class="fas fa-peso-sign text-2xl"></i>
-                        </div>
+                        <div class="bg-white/20 p-3 rounded-lg"><i class="fas fa-peso-sign text-2xl"></i></div>
                     </div>
                 </div>
             </section>
@@ -240,20 +238,14 @@ $lowStockProducts = $conn->query("SELECT * FROM products WHERE stock < 10 ORDER 
                                 <td class="py-3 px-4 text-sm font-medium"><?= htmlspecialchars($row['product_name']) ?></td>
                                 <td class="py-3 px-4 text-sm">₱<?= number_format($row['price'], 2) ?></td>
                                 <td class="py-3 px-4">
-                                    <span class="px-2 py-1 text-xs rounded-full 
-                                        <?= $row['stock'] < 10 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' ?>">
+                                    <span class="px-2 py-1 text-xs rounded-full <?= $row['stock'] < 10 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' ?>">
                                         <?= (int)$row['stock'] ?>
                                     </span>
                                 </td>
                                 <td class="py-3 px-4 text-sm"><?= (int)$row['sold_count'] ?></td>
                                 <td class="py-3 px-4 text-right">
-                                    <a href="add_product.php?edit=<?= $row['product_id'] ?>" class="text-blue-600 hover:text-blue-800 mr-3">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="AdminProducts.php?delete=<?= $row['product_id'] ?>" 
-                                        onclick="return confirm('Delete this product?')" class="text-red-600 hover:text-red-800">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
+                                    <a href="add_product.php?edit=<?= $row['product_id'] ?>" class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></a>
+                                    <a href="AdminProducts.php?delete=<?= $row['product_id'] ?>" onclick="return confirm('Delete this product?')" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></a>
                                 </td>
                             </tr>
                             <?php endwhile; ?>
@@ -269,5 +261,7 @@ $lowStockProducts = $conn->query("SELECT * FROM products WHERE stock < 10 ORDER 
         </div>
     </main>
 </div>
+
+
 </body>
 </html>

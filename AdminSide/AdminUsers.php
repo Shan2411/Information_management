@@ -41,39 +41,44 @@ $users = $conn->query($query);
 
 <body class="bg-gray-100 text-gray-800">
     <div class="flex h-screen">
-        <!-- SIDEBAR -->
-        <aside class="w-64 bg-[rgb(116,142,159)] text-white flex flex-col shadow-xl">
-            <div class="p-6 text-center text-2xl font-bold border-b border-white/20">
-                <i class="fas fa-microchip mr-2"></i>Device Market
-            </div>
-            <nav class="flex-1 p-4 space-y-2">
-                <a href="AdminDashboard.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
-                    <i class="fas fa-chart-line w-6"></i>
-                    <span class="ml-3">Dashboard</span>
-                </a>
-                <a href="AdminProducts.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
-                    <i class="fas fa-box w-6"></i>
-                    <span class="ml-3">Manage Products</span>
-                </a>
-                <a href="AdminUsers.php" class="sidebar-link active flex items-center py-3 px-4 rounded-lg transition">
-                    <i class="fas fa-users w-6"></i>
-                    <span class="ml-3">Manage Users</span>
-                </a>
-                <a href="AdminOrders.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
-                    <i class="fas fa-shopping-cart w-6"></i>
-                    <span class="ml-3">Orders</span>
-                </a>
-                <a href="AdminReports.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
-                    <i class="fas fa-chart-bar w-6"></i>
-                    <span class="ml-3">Sales Report</span>
-                </a>
-            </nav>
-            <div class="p-4 border-t border-white/20">
-                <a href="logout.php" class="block w-full text-center bg-white text-[rgb(116,142,159)] py-2.5 rounded-lg font-semibold hover:bg-gray-100 transition">
-                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                </a>
-            </div>
-        </aside>
+       <!-- SIDEBAR -->
+<aside class="w-64 bg-[rgb(116,142,159)] text-white flex flex-col shadow-xl">
+    <div class="p-6 text-center text-2xl font-bold border-b border-white/20">
+        <i class="fas fa-microchip mr-2"></i>Device Market
+    </div>
+    <nav class="flex-1 p-4 space-y-2">
+        <a href="AdminDashboard.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
+            <i class="fas fa-chart-line w-6"></i>
+            <span class="ml-3">Dashboard</span>
+        </a>
+        <a href="AdminProducts.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
+            <i class="fas fa-box w-6"></i>
+            <span class="ml-3">Manage Products</span>
+        </a>
+        <a href="AdminUsers.php" class="sidebar-link active flex items-center py-3 px-4 rounded-lg transition">
+            <i class="fas fa-users w-6"></i>
+            <span class="ml-3">Manage Users</span>
+        </a>
+        <a href="AdminStaff.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
+            <i class="fas fa-user-tie w-6"></i>
+            <span class="ml-3">Manage Staff</span>
+        </a>
+        <a href="AdminOrders.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
+            <i class="fas fa-shopping-cart w-6"></i>
+            <span class="ml-3">Orders</span>
+        </a>
+        <a href="AdminReports.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
+            <i class="fas fa-chart-bar w-6"></i>
+            <span class="ml-3">Sales Report</span>
+        </a>
+    </nav>
+    <div class="p-4 border-t border-white/20">
+        <a href="logout.php" class="block w-full text-center bg-white text-[rgb(116,142,159)] py-2.5 rounded-lg font-semibold hover:bg-gray-100 transition">
+            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+        </a>
+    </div>
+</aside>
+
 
         <!-- MAIN CONTENT -->
         <main class="flex-1 overflow-y-auto">

@@ -62,6 +62,28 @@ $update_stock = $conn->prepare("UPDATE products SET stock = GREATEST(stock - ?, 
 $update_stock->bind_param("ii", $quantity, $product_id);
 $update_stock->execute();
 
+// --- Save user info if requested ---
+if (isset($_POST['save_user_info']) && $_POST['save_user_info'] == '1') {
+    $update_user = $conn->prepare("
+        UPDATE users SET 
+            first_name = ?, last_name = ?, contact_num = ?, address = ?, city = ?, province = ?, postal_code = ?
+        WHERE user_id = ?
+    ");
+    $update_user->bind_param(
+        "sssssssi",
+        $first_name,
+        $last_name,
+        $contact_num,
+        $address,
+        $city,
+        $province,
+        $postal_code,
+        $user_id
+    );
+    $update_user->execute();
+}
+
+
 ?>
 
 <!DOCTYPE html>

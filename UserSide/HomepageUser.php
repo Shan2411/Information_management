@@ -65,7 +65,7 @@ include 'db_connect.php';
   <h3 class="text-3xl font-bold text-center mb-10">Our Top Selling Products</h3>
 
   <?php
-  $result = $conn->query("SELECT * FROM products");
+  $result = $conn->query("SELECT * FROM products where sold_count > 3");
   $product_count = $result ? $result->num_rows : 0;
   ?>
 

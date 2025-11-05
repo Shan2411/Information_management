@@ -41,3 +41,17 @@ if (!isset($_SESSION['admin'])) {
             </div>
         </div>
     </nav>
+
+
+<!-- header.php -->
+<script>
+window.addEventListener("beforeunload", function (e) {
+    if (performance.getEntriesByType("navigation")[0].type !== "reload") {
+        navigator.sendBeacon("logout.php");
+    }
+});
+</script>
+
+
+
+</body>

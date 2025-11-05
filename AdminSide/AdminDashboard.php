@@ -270,5 +270,7 @@ $lowStockProducts = $conn->query("SELECT * FROM products WHERE stock < 10 ORDER 
         </div>
     </main>
 </div>
+
+
 </body>
 </html>

@@ -24,14 +24,32 @@ if (isset($_POST['update_status'])) {
         'cancelled' => []
     ];
 
-    if (in_array($status, $allowed_transitions[$current_status])) {
-        $conn->query("UPDATE orders SET status='$status' WHERE order_id=$order_id");
-        header("Location: AdminOrders.php?success=updated");
-        exit();
-    } else {
-        header("Location: AdminOrders.php?error=invalid");
-        exit();
+if (in_array($status, $allowed_transitions[$current_status])) {
+    // Update the order status
+    $conn->query("UPDATE orders SET status='$status' WHERE order_id=$order_id");
+
+    // Increment sold_count if status changed to completed
+    if ($status === 'completed' && $current_status !== 'completed') {
+        // Get the product_id and quantity from this order
+        $order_result = $conn->query("SELECT product_id, quantity FROM orders WHERE order_id=$order_id");
+        if ($order_result->num_rows > 0) {
+            $order_data = $order_result->fetch_assoc();
+            $product_id = (int)$order_data['product_id'];
+            $quantity = (int)$order_data['quantity'];
+
+            // Update sold_count in products table
+            $conn->query("UPDATE products SET sold_count = sold_count + $quantity WHERE product_id = $product_id");
+        }
     }
+
+    header("Location: AdminOrders.php?success=updated");
+    exit();
+} else {
+    header("Location: AdminOrders.php?error=invalid");
+    exit();
+}
+
+
 }
 
 // Filters

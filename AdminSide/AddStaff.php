@@ -8,41 +8,42 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 $errors = [];
-$success = '';
+$success = false;
 
+// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $role = trim($_POST['role'] ?? '');
-    $password = $_POST['password'] ?? '';
+    $name = trim($_POST['name']);
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
 
     // Validation
-    if (!$name) $errors[] = "Name is required.";
-    if (!$email) $errors[] = "Email is required.";
-    if (!$role) $errors[] = "Role is required.";
-    if (!$password) $errors[] = "Password is required.";
+    if (empty($name)) $errors[] = "Name is required.";
+    if (empty($email)) $errors[] = "Email is required.";
+    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Invalid email format.";
+    if (empty($password)) $errors[] = "Password is required.";
+    elseif (strlen($password) < 6) $errors[] = "Password must be at least 6 characters.";
 
-    // Check email uniqueness
-    $stmt = $conn->prepare("SELECT staff_id FROM staff WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $stmt->store_result();
-    if ($stmt->num_rows > 0) {
-        $errors[] = "Email already exists.";
+    // Check if email already exists
+    if (empty($errors)) {
+        $email_safe = $conn->real_escape_string($email);
+        $check = $conn->query("SELECT * FROM staff WHERE email='$email_safe'");
+        if ($check->num_rows > 0) {
+            $errors[] = "Email already exists.";
+        }
     }
-    $stmt->close();
 
+    // Insert into database
     if (empty($errors)) {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("INSERT INTO staff (name, email, role, password, created_at) VALUES (?, ?, ?, ?, NOW())");
-        $stmt->bind_param("ssss", $name, $email, $role, $hashed_password);
+        $stmt = $conn->prepare("INSERT INTO staff (name, email, password, created_at) VALUES (?, ?, ?, NOW())");
+        $stmt->bind_param("sss", $name, $email, $hashed_password);
         if ($stmt->execute()) {
-            $success = "Staff added successfully!";
-            $name = $email = $role = $password = '';
+            $success = true;
+            header("Location: AdminStaff.php?success=added");
+            exit;
         } else {
-            $errors[] = "Failed to add staff. Try again.";
+            $errors[] = "Database error: " . $stmt->error;
         }
-        $stmt->close();
     }
 }
 ?>
@@ -55,54 +56,100 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <title>Add Staff | Device Market</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    .sidebar-link:hover { background-color: rgba(255, 255, 255, 0.1); }
+    .sidebar-link.active { background-color: rgba(255, 255, 255, 0.2); border-left: 4px solid white; }
+</style>
 </head>
 <body class="bg-gray-100 text-gray-800">
-<div class="max-w-xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md">
-    <h1 class="text-2xl font-bold mb-4 text-[rgb(116,142,159)]">Add New Staff</h1>
+<div class="flex h-screen">
 
-    <?php if ($errors): ?>
-        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded mb-4">
-            <ul class="list-disc pl-5">
-                <?php foreach ($errors as $e): ?>
-                    <li><?= htmlspecialchars($e) ?></li>
-                <?php endforeach; ?>
-            </ul>
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-[rgb(116,142,159)] text-white flex flex-col shadow-xl">
+        <div class="p-6 text-center text-2xl font-bold border-b border-white/20">
+            <i class="fas fa-microchip mr-2"></i>Device Market
         </div>
-    <?php endif; ?>
+        <nav class="flex-1 p-4 space-y-2">
+            <a href="AdminDashboard.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
+                <i class="fas fa-chart-line w-6"></i>
+                <span class="ml-3">Dashboard</span>
+            </a>
+            <a href="AdminProducts.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
+                <i class="fas fa-box w-6"></i>
+                <span class="ml-3">Manage Products</span>
+            </a>
+            <a href="AdminUsers.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
+                <i class="fas fa-users w-6"></i>
+                <span class="ml-3">Manage Users</span>
+            </a>
+            <a href="AdminOrders.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
+                <i class="fas fa-shopping-cart w-6"></i>
+                <span class="ml-3">Orders</span>
+            </a>
+            <a href="AdminReports.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
+                <i class="fas fa-chart-bar w-6"></i>
+                <span class="ml-3">Sales Report</span>
+            </a>
+            <a href="AdminStaff.php" class="sidebar-link active flex items-center py-3 px-4 rounded-lg transition">
+                <i class="fas fa-user-tie w-6"></i>
+                <span class="ml-3">Staff Accounts</span>
+            </a>
+        </nav>
+        <div class="p-4 border-t border-white/20">
+            <a href="logout.php" class="block w-full text-center bg-white text-[rgb(116,142,159)] py-2.5 rounded-lg font-semibold hover:bg-gray-100 transition">
+                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+            </a>
+        </div>
+    </aside>
 
-    <?php if ($success): ?>
-        <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded mb-4">
-            <?= htmlspecialchars($success) ?>
-        </div>
-    <?php endif; ?>
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 overflow-y-auto">
+        <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-4">
+            <h1 class="text-3xl font-bold text-[rgb(116,142,159)]">Add New Staff</h1>
+            <p class="text-gray-500 text-sm mt-1">Create a new staff account</p>
+        </header>
 
-    <form method="POST" class="space-y-4">
-        <div>
-            <label class="block mb-1 font-semibold">Name</label>
-            <input type="text" name="name" value="<?= htmlspecialchars($name ?? '') ?>" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
+        <div class="p-8 max-w-3xl mx-auto">
+
+            <?php if (!empty($errors)): ?>
+                <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded mb-6">
+                    <ul class="list-disc pl-5">
+                        <?php foreach ($errors as $error): ?>
+                            <li><?= htmlspecialchars($error) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <form method="POST" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-1">Full Name</label>
+                        <input type="text" name="name" value="<?= isset($name) ? htmlspecialchars($name) : '' ?>" 
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-1">Email</label>
+                        <input type="email" name="email" value="<?= isset($email) ? htmlspecialchars($email) : '' ?>" 
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-1">Password</label>
+                        <input type="password" name="password" placeholder="Minimum 6 characters" 
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
+                    </div>
+                    <div class="flex gap-3 mt-4">
+                        <button type="submit" class="bg-[rgb(116,142,159)] hover:bg-[rgb(100,123,136)] text-white px-6 py-2.5 rounded-lg transition inline-flex items-center">
+                            <i class="fas fa-plus mr-2"></i>Add Staff
+                        </button>
+                        <a href="AdminStaff.php" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2.5 rounded-lg transition inline-flex items-center">
+                            <i class="fas fa-arrow-left mr-2"></i>Back
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div>
-            <label class="block mb-1 font-semibold">Email</label>
-            <input type="email" name="email" value="<?= htmlspecialchars($email ?? '') ?>" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
-        </div>
-        <div>
-            <label class="block mb-1 font-semibold">Role</label>
-            <select name="role" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
-                <option value="">--Select Role--</option>
-                <option value="Admin" <?= (isset($role) && $role=='Admin')?'selected':'' ?>>Admin</option>
-                <option value="Staff" <?= (isset($role) && $role=='Staff')?'selected':'' ?>>Staff</option>
-            </select>
-        </div>
-        <div>
-            <label class="block mb-1 font-semibold">Password</label>
-            <input type="password" name="password" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
-        </div>
-        <div class="flex justify-between">
-            <a href="AdminStaff.php" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition">Back</a>
-            <button type="submit" class="bg-[rgb(116,142,159)] hover:bg-[rgb(100,123,136)] text-white px-6 py-2 rounded-lg transition">Add Staff</button>
-        </div>
-    </form>
+    </main>
 </div>
 </body>
 </html>
-

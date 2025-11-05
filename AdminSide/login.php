@@ -14,26 +14,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
 
-    // Fetch admin from database
+    // Fetch admin/staff account
     $stmt = $conn->prepare("SELECT * FROM admins WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
+    if ($result && $result->num_rows > 0) {
         $admin = $result->fetch_assoc();
 
-        // Check password (plain text or hashed)
+        // Validate password (hashed or plain for legacy)
         if (password_verify($password, $admin['password']) || $password === $admin['password']) {
+            // Store session data
             $_SESSION['admin_id'] = $admin['id'];
             $_SESSION['admin_username'] = $admin['username'];
-            header("Location: AdminDashboard.php");
+            $_SESSION['admin_email'] = $admin['email'];
+            $_SESSION['role'] = $admin['role'] ?? 'admin';
+
+            // Redirect based on role
+            if ($admin['role'] === 'staff') {
+                header("Location: StaffDashboard.php");
+            } else {
+                header("Location: AdminDashboard.php");
+            }
             exit();
         } else {
             $error = "Invalid password.";
         }
     } else {
-        $error = "Admin not found.";
+        $error = "Account not found.";
     }
 
     $stmt->close();
@@ -55,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i class="fas fa-user-shield text-blue-600 text-3xl"></i>
             </div>
-            <h2 class="text-3xl font-bold text-gray-800">Admin Login</h2>
+            <h2 class="text-3xl font-bold text-gray-800">Admin / Staff Login</h2>
             <p class="text-gray-500 mt-2">Sign in to manage the system</p>
         </div>
 

@@ -180,42 +180,44 @@
         }
 
         .password-wrapper {
-            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;        
         }
 
         .password-wrapper input {
-            padding-right: 3rem;
+            flex: 1 1 auto;
         }
 
         .toggle-password {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
+            background: transparent;
             border: none;
-            color: #3498db;
             cursor: pointer;
             font-size: 18px;
-            padding: 0.25rem;
-            transition: color 0.2s;
+            padding: 6px 8px;
         }
 
         .toggle-password:hover {
             color: #2980b9;
         }
 
+        /* Save button visible but disabled */
+        .save-btn[disabled] {
+        opacity: 0.65;
+        cursor: not-allowed;
+        filter: grayscale(0.02);
+        box-shadow: none;
+        }
+        /* Default appearance for save button (when enabled) */
         .save-btn {
-            background: #27ae60;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.2s;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: none;
+        background: linear-gradient(180deg,#2ecc71,#27ae60);
+        color: #fff;
+        font-weight: 700;
+        width: 100%;
+        box-sizing: border-box;
         }
 
         .save-btn:hover {
@@ -225,17 +227,14 @@
         }
 
         .change-password-btn {
-            background: #2c3e50;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.2s;
-            margin-bottom: 1rem;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: none;
+        background: #24303a;
+        color: #fff;
+        font-weight: 700;
+        width: 100%;
+        box-sizing: border-box;
         }
 
         .change-password-btn:hover {
@@ -256,15 +255,17 @@
         }
 
         .success-message {
-            background: #d4edda;
-            border-left: 4px solid #27ae60;
-            padding: 1rem;
-            border-radius: 6px;
-            color: #155724;
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 1rem;
             display: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: #e9f8ef;
+            color: #1e8a4b;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .success-message.show {
+        display: block;
         }
 
         .stats-grid {
@@ -352,16 +353,21 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+        @media (max-width: 600px) {
+  .overlay .overlay-content { padding: 14px; max-width: 92%; }
+  .save-btn, .change-password-btn { padding: 10px; }
+}
 
 .overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(44, 62, 80, 0.75);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
+            background: rgba(22, 33, 41, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1200;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
 
         .overlay.active {
@@ -370,18 +376,18 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        from { opacity: 0; transform: translateY(6px); }
+        to   { opacity: 1; transform: translateY(0); }
         }
 
         .overlay-content {
-            background: white;
-            padding: 1.75rem;
-            border-radius: 12px;
-            width: 90%;
-            box-shadow: 0 4px 16px rgba(44, 62, 80, 0.2);
-            border: 1px solid #e8ebed;
-            animation: slideUp 0.3s ease;
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px;
+            width: 100%;
+            max-width: 520px;
+            box-shadow: 0 18px 48px rgba(10,20,30,0.18);
+            border: 1px solid #eef4f7;
         }
 
         @keyframes slideUp {

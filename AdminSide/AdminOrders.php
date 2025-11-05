@@ -11,17 +11,47 @@ if (!isset($_SESSION['admin_id'])) {
 if (isset($_POST['update_status'])) {
     $order_id = (int)$_POST['order_id'];
     $status = $conn->real_escape_string($_POST['status']);
-    $conn->query("UPDATE orders SET status='$status' WHERE order_id=$order_id");
-    header("Location: AdminOrders.php?success=updated");
-    exit();
+
+    // Get current status
+    $current_status_result = $conn->query("SELECT status FROM orders WHERE order_id = $order_id");
+    $current_status = $current_status_result->fetch_assoc()['status'];
+
+    // Allowable transitions
+    $allowed_transitions = [
+        'pending' => ['processing', 'completed', 'cancelled'],
+        'processing' => ['completed', 'cancelled'],
+        'completed' => [],
+        'cancelled' => []
+    ];
+
+    if (in_array($status, $allowed_transitions[$current_status])) {
+        $conn->query("UPDATE orders SET status='$status' WHERE order_id=$order_id");
+        header("Location: AdminOrders.php?success=updated");
+        exit();
+    } else {
+        header("Location: AdminOrders.php?error=invalid");
+        exit();
+    }
 }
 
-// Fetch orders with filter
+// Filters
 $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
-$query = "SELECT o.*, u.username, u.email FROM orders o JOIN users u ON o.user_id = u.user_id";
+$from_date = isset($_GET['from_date']) ? $_GET['from_date'] : '';
+$to_date = isset($_GET['to_date']) ? $_GET['to_date'] : '';
+
+$query = "SELECT o.*, u.username, u.email 
+          FROM orders o 
+          JOIN users u ON o.user_id = u.user_id
+          WHERE 1=1";
+
 if ($filter) {
-    $query .= " WHERE o.status = '" . $conn->real_escape_string($filter) . "'";
+    $query .= " AND o.status = '" . $conn->real_escape_string($filter) . "'";
 }
+
+if (!empty($from_date) && !empty($to_date)) {
+    $query .= " AND DATE(o.order_date) BETWEEN '$from_date' AND '$to_date'";
+}
+
 $query .= " ORDER BY o.order_date DESC";
 $orders = $conn->query($query);
 ?>
@@ -37,6 +67,11 @@ $orders = $conn->query($query);
     <style>
         .sidebar-link:hover { background-color: rgba(255, 255, 255, 0.1); }
         .sidebar-link.active { background-color: rgba(255, 255, 255, 0.2); border-left: 4px solid white; }
+        select:disabled {
+            background-color: #f3f4f6;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -49,24 +84,19 @@ $orders = $conn->query($query);
             </div>
             <nav class="flex-1 p-4 space-y-2">
                 <a href="AdminDashboard.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
-                    <i class="fas fa-chart-line w-6"></i>
-                    <span class="ml-3">Dashboard</span>
+                    <i class="fas fa-chart-line w-6"></i><span class="ml-3">Dashboard</span>
                 </a>
                 <a href="AdminProducts.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
-                    <i class="fas fa-box w-6"></i>
-                    <span class="ml-3">Manage Products</span>
+                    <i class="fas fa-box w-6"></i><span class="ml-3">Manage Products</span>
                 </a>
                 <a href="AdminUsers.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
-                    <i class="fas fa-users w-6"></i>
-                    <span class="ml-3">Manage Users</span>
+                    <i class="fas fa-users w-6"></i><span class="ml-3">Manage Users</span>
                 </a>
                 <a href="AdminOrders.php" class="sidebar-link active flex items-center py-3 px-4 rounded-lg transition">
-                    <i class="fas fa-shopping-cart w-6"></i>
-                    <span class="ml-3">Orders</span>
+                    <i class="fas fa-shopping-cart w-6"></i><span class="ml-3">Orders</span>
                 </a>
                 <a href="AdminReports.php" class="sidebar-link flex items-center py-3 px-4 rounded-lg transition">
-                    <i class="fas fa-chart-bar w-6"></i>
-                    <span class="ml-3">Sales Report</span>
+                    <i class="fas fa-chart-bar w-6"></i><span class="ml-3">Sales Report</span>
                 </a>
             </nav>
             <div class="p-4 border-t border-white/20">
@@ -85,35 +115,59 @@ $orders = $conn->query($query);
 
             <div class="p-8">
                 <?php if (isset($_GET['success'])): ?>
-                <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded mb-6">
-                    <i class="fas fa-check-circle mr-2"></i>Order status updated successfully!
-                </div>
+                    <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded mb-6">
+                        <i class="fas fa-check-circle mr-2"></i>Order status updated successfully!
+                    </div>
+                <?php elseif (isset($_GET['error'])): ?>
+                    <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded mb-6">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>Invalid status transition!
+                    </div>
                 <?php endif; ?>
 
                 <!-- Filter Buttons -->
                 <div class="bg-white rounded-xl shadow-md p-6 mb-6">
-                    <div class="flex flex-wrap gap-3">
-                        <a href="AdminOrders.php" 
-                            class="px-5 py-2.5 rounded-lg font-semibold transition <?= $filter == '' ? 'bg-[rgb(116,142,159)] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
-                            <i class="fas fa-list mr-2"></i>All Orders
-                        </a>
-                        <a href="AdminOrders.php?filter=pending" 
-                            class="px-5 py-2.5 rounded-lg font-semibold transition <?= $filter == 'pending' ? 'bg-yellow-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
-                            <i class="fas fa-clock mr-2"></i>Pending
-                        </a>
-                        <a href="AdminOrders.php?filter=processing" 
-                            class="px-5 py-2.5 rounded-lg font-semibold transition <?= $filter == 'processing' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
-                            <i class="fas fa-cog mr-2"></i>Processing
-                        </a>
-                        <a href="AdminOrders.php?filter=completed" 
-                            class="px-5 py-2.5 rounded-lg font-semibold transition <?= $filter == 'completed' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
-                            <i class="fas fa-check mr-2"></i>Completed
-                        </a>
-                        <a href="AdminOrders.php?filter=cancelled" 
-                            class="px-5 py-2.5 rounded-lg font-semibold transition <?= $filter == 'cancelled' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
-                            <i class="fas fa-times mr-2"></i>Cancelled
-                        </a>
-                    </div>
+                    <form method="GET" class="flex flex-wrap items-center gap-4">
+                        <div class="flex flex-wrap gap-3">
+                            <?php
+                            $filters = [
+                                '' => ['All Orders', 'fa-list', 'gray'],
+                                'pending' => ['Pending', 'fa-clock', 'yellow'],
+                                'processing' => ['Processing', 'fa-cog', 'blue'],
+                                'completed' => ['Completed', 'fa-check', 'green'],
+                                'cancelled' => ['Cancelled', 'fa-times', 'red']
+                            ];
+                            foreach ($filters as $key => $data):
+                                [$label, $icon, $color] = $data;
+                                $isActive = ($filter == $key);
+                                $bgClass = $isActive ? "bg-$color-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300";
+                            ?>
+                                <a href="AdminOrders.php<?= $key ? '?filter=' . $key : '' ?>" 
+                                   class="px-5 py-2.5 rounded-lg font-semibold transition <?= $bgClass ?>">
+                                    <i class="fas <?= $icon ?> mr-2"></i><?= $label ?>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <!-- DATE FILTER -->
+                        <div class="flex items-center gap-3 ml-auto">
+                            <label class="font-semibold text-gray-700">From:</label>
+                            <input type="date" name="from_date" value="<?= htmlspecialchars($from_date) ?>"
+                                   class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[rgb(116,142,159)]">
+
+                            <label class="font-semibold text-gray-700">To:</label>
+                            <input type="date" name="to_date" value="<?= htmlspecialchars($to_date) ?>"
+                                   class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[rgb(116,142,159)]">
+
+                            <button type="submit"
+                                    class="bg-[rgb(116,142,159)] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[rgb(100,123,136)] transition">
+                                <i class="fas fa-filter mr-2"></i>Apply
+                            </button>
+                            <a href="AdminOrders.php"
+                               class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-400 transition">
+                                <i class="fas fa-undo mr-1"></i>Reset
+                            </a>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Orders Table -->
@@ -131,46 +185,70 @@ $orders = $conn->query($query);
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
-                                <?php while ($order = $orders->fetch_assoc()): ?>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 text-sm font-bold text-[rgb(116,142,159)]">#<?= $order['order_id'] ?></td>
-                                    <td class="px-6 py-4">
-                                        <p class="font-semibold text-gray-800"><?= htmlspecialchars($order['username']) ?></p>
-                                        <p class="text-sm text-gray-500"><i class="fas fa-envelope mr-1"></i><?= htmlspecialchars($order['email']) ?></p>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-600">
-                                        <i class="fas fa-calendar mr-1"></i><?= date('M d, Y', strtotime($order['order_date'])) ?>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm font-bold text-gray-800">₱<?= number_format($order['total_amount'], 2) ?></td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-3 py-1 text-xs rounded-full font-semibold
-                                            <?php 
-                                            echo $order['status'] == 'completed' ? 'bg-green-100 text-green-700' : 
-                                                ($order['status'] == 'pending' ? 'bg-yellow-100 text-yellow-700' : 
-                                                ($order['status'] == 'processing' ? 'bg-blue-100 text-blue-700' : 
-                                                'bg-red-100 text-red-700'));
-                                            ?>">
-                                            <?= ucfirst($order['status']) ?>
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <form method="POST" class="flex gap-2 justify-center items-center">
-                                            <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
-                                            <select name="status" 
-                                                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]">
-                                                <option value="pending" <?= $order['status'] == 'pending' ? 'selected' : '' ?>>Pending</option>
-                                                <option value="processing" <?= $order['status'] == 'processing' ? 'selected' : '' ?>>Processing</option>
-                                                <option value="completed" <?= $order['status'] == 'completed' ? 'selected' : '' ?>>Completed</option>
-                                                <option value="cancelled" <?= $order['status'] == 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
-                                            </select>
-                                            <button type="submit" name="update_status" 
-                                                class="bg-[rgb(116,142,159)] hover:bg-[rgb(100,123,136)] text-white px-4 py-2 rounded-lg text-sm transition font-semibold">
-                                                <i class="fas fa-sync-alt mr-1"></i>Update
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <?php endwhile; ?>
+                                <?php if ($orders->num_rows > 0): ?>
+                                    <?php while ($order = $orders->fetch_assoc()): ?>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 text-sm font-bold text-[rgb(116,142,159)]">#<?= $order['order_id'] ?></td>
+                                        <td class="px-6 py-4">
+                                            <p class="font-semibold text-gray-800"><?= htmlspecialchars($order['username']) ?></p>
+                                            <p class="text-sm text-gray-500"><i class="fas fa-envelope mr-1"></i><?= htmlspecialchars($order['email']) ?></p>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-600">
+                                            <i class="fas fa-calendar mr-1"></i><?= date('M d, Y', strtotime($order['order_date'])) ?>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm font-bold text-gray-800">₱<?= number_format($order['total_amount'], 2) ?></td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-3 py-1 text-xs rounded-full font-semibold
+                                                <?= $order['status'] == 'completed' ? 'bg-green-100 text-green-700' : 
+                                                   ($order['status'] == 'pending' ? 'bg-yellow-100 text-yellow-700' : 
+                                                   ($order['status'] == 'processing' ? 'bg-blue-100 text-blue-700' : 
+                                                   'bg-red-100 text-red-700')) ?>">
+                                                <?= ucfirst($order['status']) ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <form method="POST" class="flex gap-2 justify-center items-center">
+                                                <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
+
+                                                <select name="status"
+                                                    class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[rgb(116,142,159)]"
+                                                    <?= ($order['status'] == 'completed' || $order['status'] == 'cancelled') ? 'disabled' : '' ?>>
+                                                    <?php if ($order['status'] == 'pending'): ?>
+                                                        <option value="pending" selected>Pending</option>
+                                                        <option value="processing">Processing</option>
+                                                        <option value="completed">Completed</option>
+                                                        <option value="cancelled">Cancelled</option>
+                                                    <?php elseif ($order['status'] == 'processing'): ?>
+                                                        <option value="processing" selected>Processing</option>
+                                                        <option value="completed">Completed</option>
+                                                        <option value="cancelled">Cancelled</option>
+                                                    <?php elseif ($order['status'] == 'completed'): ?>
+                                                        <option value="completed" selected>Completed</option>
+                                                    <?php elseif ($order['status'] == 'cancelled'): ?>
+                                                        <option value="cancelled" selected>Cancelled</option>
+                                                    <?php endif; ?>
+                                                </select>
+
+                                                <button type="submit" name="update_status"
+                                                    class="bg-[rgb(116,142,159)] hover:bg-[rgb(100,123,136)] text-white px-4 py-2 rounded-lg text-sm transition font-semibold"
+                                                    <?= ($order['status'] == 'completed' || $order['status'] == 'cancelled') ? 'disabled' : '' ?>>
+                                                    <i class="fas fa-sync-alt mr-1"></i>Update
+                                                </button>
+
+                                                <?php if ($order['status'] == 'completed' || $order['status'] == 'cancelled'): ?>
+                                                    <i class="fas fa-lock text-gray-400 ml-2"></i>
+                                                <?php endif; ?>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="6" class="text-center text-gray-500 py-6">
+                                            <i class="fas fa-info-circle mr-2"></i>No orders found for this filter.
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>

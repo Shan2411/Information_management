@@ -1,12 +1,21 @@
 <?php
 session_start();
 
-// Optional: Redirect if no OTP was sent
+// First visit? If user just arrived *without submitting or failing* → do not show error.
+if (!isset($_SESSION['otp_error_shown'])) {
+    unset($_SESSION['otp_error']);
+}
+
+// Mark that the user has now seen the page once
+$_SESSION['otp_error_shown'] = true;
+
+// Block access if no OTP pending
 if (!isset($_SESSION['otp'])) {
     header("Location: HomepageUser.php");
     exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,6 +30,16 @@ if (!isset($_SESSION['otp'])) {
     <h2 class="text-2xl font-bold text-[rgb(116,142,159)] mb-3">
         Email Verification
     </h2>
+
+    <!-- ✅ DISPLAY OTP ERROR MESSAGE HERE -->
+    <?php if(isset($_SESSION['otp_error'])): ?>
+        <div class="bg-red-100 text-red-700 px-3 py-2 rounded mb-4 border border-red-300 text-sm">
+            <?php 
+                echo $_SESSION['otp_error']; 
+                unset($_SESSION['otp_error']); // clear after showing
+            ?>
+        </div>
+    <?php endif; ?>
 
     <p class="text-gray-600 text-sm mb-6">
         We sent a 6-digit verification code to your email.<br>
@@ -38,8 +57,8 @@ if (!isset($_SESSION['otp'])) {
         </button>
     </form>
 
-    <form action="send_otp.php" method="POST" class="mt-3">
-        <!-- Re-send hidden values -->
+    <!-- ✅ FIXED RESEND BUTTON (NO POST DATA REQUIRED) -->
+    <form action="resend_otp.php" method="POST" class="mt-3">
         <button class="text-sm text-[rgb(116,142,159)] hover:underline" type="submit">Resend Code</button>
     </form>
 
